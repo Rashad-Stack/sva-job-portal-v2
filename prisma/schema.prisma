@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
@@ -87,3 +88,94 @@ enum SalaryType {
   RANGE
   FIXED
 }
+=======
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Modarator {
+  id         Int      @id @default(autoincrement())
+  job        Job[]    @relation("ModaratorJobs") // optional relation name
+  name       String
+  email      String   @unique
+  password   String
+  role       Role     @default(Modarator)
+  created_at DateTime @default(now())
+}
+
+model Job {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  modaratorId Int?
+  modarator   Modarator? @relation(fields: [modaratorId], references: [id], name: "ModaratorJobs")
+
+  // Basic Information
+  title       String?
+  companyName String?
+  vacancy     Int     @default(1)
+
+  // Salary Information
+  salaryType  SalaryType @default(NEGOTIABLE)
+  salaryMin   Float?
+  salaryMax   Float?
+  fixedSalary Float?
+
+  location String
+
+  jobType JobType?
+
+  // Requirements
+  experience             String
+  education              String?
+  additionalRequirements String? @db.Text
+
+  // Job Details
+  responsibilities String @db.Text
+  skills           String @db.Text
+
+  // Benefits
+  lunch         String?
+  salaryReview  String?
+  otherBenefits String? @db.Text
+
+  // Company Information
+  companyInfo String @db.Text
+
+  // Application Details
+  deadline DateTime?
+  isActive Boolean   @default(true)
+
+  // Timestamps for tracking
+  publishedAt DateTime?
+  closedAt    DateTime?
+
+  @@index([jobType])
+  @@index([location])
+  @@index([isActive])
+}
+
+enum Role {
+  Admin
+  Modarator
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+enum SalaryType {
+  NEGOTIABLE
+  RANGE
+  FIXED
+}
+>>>>>>> origin/main
