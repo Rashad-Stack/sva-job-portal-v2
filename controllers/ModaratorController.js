@@ -125,9 +125,9 @@ export const LoginModarator = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: modarator.id }, // make sure it's `id`, not `ModaratorId`
+      { id: modarator.id }, // Use `id` as it's the actual field name in the model
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" } // You can set the expiration as per your requirement
     );
 
     // Set the token in cookies
