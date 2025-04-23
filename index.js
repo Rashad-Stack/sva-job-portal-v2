@@ -30,9 +30,9 @@ app.get("/", (req, res) => {
 });
 app.use(express.json());
 
-import useRoute from "./routes/userRoutes.js";
+import useRoute from "./src/routes/userRoutes.js";
 app.use("/api/v1/user", useRoute);
-import jobRoute from "./routes/jobRoutes.js";
+import jobRoute from "./src/routes/jobRoutes.js";
 app.use("/api/v1/job", jobRoute);
 
 app.listen(port, () => {
