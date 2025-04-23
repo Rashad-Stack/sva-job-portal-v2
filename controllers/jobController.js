@@ -19,7 +19,7 @@ export const fetchJobs = async (req, res) => {
 
 export const createJob = async (req, res) => {
   try {
-    console.log("Modarator from request:", req.modaratorId);
+    console.log("Moderator from request:", req.modarator);
 
     const modaratorId = req.modarator.id;
 
