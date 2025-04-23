@@ -20,9 +20,9 @@ jobRoute.post("/create", verifyRole("Admin", "Modarator"), createJob);
 jobRoute.get("/:id", showJob);
 
 // Admin-only route to update a job
-jobRoute.put("/update/:id", verifyRole("Admin"), updateJob);
+jobRoute.put("/update/:id", verifyRole("Admin", "Modarator"), updateJob);
 
 // Admin-only route to delete a job
-jobRoute.delete("/delete/:id", verifyRole("Admin", "User"), deleteJob);
+jobRoute.delete("/delete/:id", verifyRole("Admin", "Modarator"), deleteJob);
 
 export default jobRoute;
