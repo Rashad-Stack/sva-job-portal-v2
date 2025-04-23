@@ -1,6 +1,5 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import verifyRole from "../middleware/verifyToken.js";
+import verifyRole from "../middleware/AdminRole.js";
 import {
   createJob,
   deleteJob,
@@ -15,13 +14,13 @@ const jobRoute = express.Router();
 jobRoute.get("/all", fetchJobs);
 
 // Admin-only route to create a job
-jobRoute.post("/create", createJob);
+jobRoute.post("/create", verifyRole("Admin", "Modarator"), createJob);
 
 // Public route to view a job by ID
 jobRoute.get("/:id", showJob);
 
 // Admin-only route to update a job
-jobRoute.put("/update/:id", verifyRole("Admin", "User"), updateJob);
+jobRoute.put("/update/:id", verifyRole("Admin"), updateJob);
 
 // Admin-only route to delete a job
 jobRoute.delete("/delete/:id", verifyRole("Admin", "User"), deleteJob);
