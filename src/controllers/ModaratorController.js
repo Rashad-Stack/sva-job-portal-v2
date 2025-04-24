@@ -124,21 +124,38 @@ export const LoginModarator = async (req, res) => {
         .json({ message: "Incorrect password, please try again." });
     }
 
+    // ✅ Corrected variable name
     const token = jwt.sign(
-      { id: modarator.id }, // Use `id` as it's the actual field name in the model
+      {
+        id: modarator.id,
+        name: modarator.name,
+        email: modarator.email,
+        role: modarator.role,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } // You can set the expiration as per your requirement
+      {
+        expiresIn: "1d",
+      }
     );
 
-    // Set the token in cookies
+    // ✅ Set the token in cookies
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Use secure cookies only in production
-      sameSite: "strict", // CSRF protection
-      maxAge: 72 * 60 * 60 * 1000, // Cookie expires in 72 hours
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 72 * 60 * 60 * 1000, // 72 hours
     });
 
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: modarator.id,
+        name: modarator.name,
+        email: modarator.email,
+        role: modarator.role,
+      },
+    });
   } catch (err) {
     console.error("Error logging in:", err);
     res.status(500).json({ message: "Error logging in", error: err.message });
