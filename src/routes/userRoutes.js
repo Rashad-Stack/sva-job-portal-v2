@@ -1,5 +1,5 @@
 import express from "express";
-import AdminRole from "../middleware/AdminRole.js";
+import verifyRole from "../middleware/AdminRole.js";
 import {
   createModarator,
   deleteModarator,
@@ -12,11 +12,15 @@ import {
 
 const Modaratoroute = express.Router();
 
-Modaratoroute.get("/all", fetchModarators);
-Modaratoroute.post("/create", createModarator);
-Modaratoroute.get("/:id", showModarator);
-Modaratoroute.put("/update/:id", updateModarator);
-Modaratoroute.delete("/delete/:id", deleteModarator);
+Modaratoroute.get("/all", verifyRole("Admin"), fetchModarators);
+Modaratoroute.post("/create", verifyRole("Admin"), createModarator);
+Modaratoroute.get("/:id", verifyRole("Admin", "Modarator"), showModarator);
+Modaratoroute.put(
+  "/update/:id",
+  verifyRole("Admin", "Modarator"),
+  updateModarator
+);
+Modaratoroute.delete("/delete/:id", verifyRole("Admin"), deleteModarator);
 Modaratoroute.post("/login", LoginModarator);
 Modaratoroute.post("/logout", logoutModarator);
 
