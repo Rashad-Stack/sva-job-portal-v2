@@ -37,7 +37,7 @@ CREATE TABLE "Job" (
     "experience" TEXT NOT NULL,
     "education" TEXT,
     "additionalRequirements" TEXT,
-    "responsibilities" TEXT NOT NULL,
+    "responsibilities" TEXT[],
     "skills" TEXT NOT NULL,
     "lunch" TEXT,
     "salaryReview" TEXT,
