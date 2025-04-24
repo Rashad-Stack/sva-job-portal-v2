@@ -19,9 +19,7 @@ export const fetchJobs = async (req, res) => {
 
 export const createJob = async (req, res) => {
   try {
-    console.log("Moderator from request:", req.modarator);
-
-    const modaratorId = req.modarator.id;
+    const modaratorId = req.modarator?.id;
 
     const {
       title,
@@ -40,9 +38,9 @@ export const createJob = async (req, res) => {
       skills,
       lunch,
       salaryReview,
+      otherBenefits,
       companyInfo,
       deadline,
-      isActive,
     } = req.body;
 
     const newjob = await prisma.job.create({
@@ -50,11 +48,11 @@ export const createJob = async (req, res) => {
         modaratorId,
         title,
         companyName,
-        vacancy,
+        vacancy: Number(vacancy),
         salaryType,
-        salaryMin,
-        salaryMax,
-        fixedSalary,
+        salaryMin: salaryMin ? Number(salaryMin) : null,
+        salaryMax: salaryMax ? Number(salaryMax) : null,
+        fixedSalary: fixedSalary ? Number(fixedSalary) : null,
         location,
         jobType,
         experience,
@@ -64,19 +62,24 @@ export const createJob = async (req, res) => {
         skills,
         lunch,
         salaryReview,
+        otherBenefits,
         companyInfo,
-        deadline,
-        isActive,
+        deadline: new Date(deadline),
       },
     });
-    return res.status(200).json({
+
+    return res.status(201).json({
       success: true,
+      message: "Job created successfully",
       data: newjob,
-      message: "Job created Successfully",
     });
   } catch (error) {
     console.error("Error creating job:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({
+      success: false,
+      message: "Error creating job",
+      error: error.message,
+    });
   }
 };
 

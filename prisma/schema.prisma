@@ -10,7 +10,7 @@ datasource db {
 
 model Modarator {
   id         Int      @id @default(autoincrement())
-  job        Job[]    @relation("ModaratorJobs") // optional relation name
+  job        Job[]    @relation("ModaratorJobs")
   name       String
   email      String   @unique
   password   String
@@ -26,19 +26,18 @@ model Job {
   modarator   Modarator? @relation(fields: [modaratorId], references: [id], name: "ModaratorJobs")
 
   // Basic Information
-  title       String?
-  companyName String?
-  vacancy     Int     @default(1)
+  title       String
+  companyName String
+  vacancy     Int    @default(1)
 
   // Salary Information
-  salaryType  SalaryType @default(NEGOTIABLE)
+  salaryType  SalaryType
   salaryMin   Float?
   salaryMax   Float?
   fixedSalary Float?
 
   location String
-
-  jobType JobType?
+  jobType  JobType
 
   // Requirements
   experience             String
@@ -58,8 +57,8 @@ model Job {
   companyInfo String @db.Text
 
   // Application Details
-  deadline DateTime?
-  isActive Boolean   @default(true)
+  deadline DateTime
+  isActive Boolean  @default(true)
 
   // Timestamps for tracking
   publishedAt DateTime?
