@@ -45,8 +45,8 @@ model Job {
   additionalRequirements String? @db.Text
 
   // Job Details
-  responsibilities String @db.Text
-  skills           String @db.Text
+  responsibilities String[] @db.Text
+  skills           String   @db.Text
 
   // Benefits
   lunch         String?
