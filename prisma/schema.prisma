@@ -32,12 +32,13 @@ model Job {
   appliedBy      Boolean @default(true)
 
   // Job Details
-  location  String
-  jobType   JobType
-  jobLevel  JobLevel
-  category  Category
-  jobNature JobNature
-  shift     Shift
+  location   String
+  jobType    JobType
+  jobLevel   JobLevel
+  category   Category
+  jobNature  JobNature
+  shift      Shift
+  googleForm String?
 
   deadline DateTime
 
