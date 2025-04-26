@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 node_modules
 prisma/migration
 .env
+=======
+node_modules
+prisma/migration
+.env
+>>>>>>> 3305592d66fc6a3e23944d02d016df757aa4fced
