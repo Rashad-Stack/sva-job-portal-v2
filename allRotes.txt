@@ -1,0 +1,28 @@
+create user = http://localhost:3000/api/v1/user/create
+method=post
+get all user = http://localhost:3000/user/all
+method=get
+get single user = http://localhost:3000/user/:userId
+method=get
+update user =http://localhost:3000/user/update/:userId
+method=put
+delete user = http://localhost:3000/user/delete/:userId
+method=delete
+login user = http://localhost:3000/user/login
+method = post
+log out user = http://localhost:3000/user/logout
+method = post
+
+
+job
+create job = http://localhost:3000/job/create
+method = post
+get all jobs =http://localhost:3000/api/v1/job/all
+method = get
+get single job = http://localhost:3000/job/:jobId
+method = get
+update job = http://localhost:3000/job/update/:jobId
+method = put
+delete job = http://localhost:3000/job/delete/:jobId
+method = delete
+
