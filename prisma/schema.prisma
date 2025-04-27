@@ -27,7 +27,7 @@ model Job {
 
   // Basic Information
   title          String
-  companyName    String
+  companyName    String  @default("Softvence Agency")
   numberOfHiring Int     @default(1)
   appliedBy      Boolean @default(true)
 
