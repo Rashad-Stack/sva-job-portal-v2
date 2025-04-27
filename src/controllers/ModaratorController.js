@@ -49,7 +49,7 @@ export const createModarator = async (req, res) => {
   return res.json({
     status: 200,
     data: userWithoutPassword,
-    msg: "Modarator created.",
+    msg: " created.",
   });
 };
 
