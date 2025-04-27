@@ -45,9 +45,6 @@ model Job {
   // Timestamps
   publishedAt DateTime?
   closedAt    DateTime?
-
-  @@index([jobType])
-  @@index([location])
 }
 
 enum Role {
