@@ -1,40 +1,48 @@
-import express from "express";
-import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
+// Load environment variables
 dotenv.config();
 
-import cors from "cors";
-
-const port = process.env.PORT || 3000;
+// App setup
 const app = express();
-const allowedOrigins = ["http://localhost:5174", "http://localhost:5173"];
+const port = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// CORS configuration
+const allowedOrigins = ['http://localhost:5174', 'http://localhost:5173'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
-app.use(cookieParser());
-app.get("/", (req, res) => {
-  res.send("home page");
-});
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 
-import useRoute from "./src/routes/userRoutes.js";
-app.use("/api/v1/user", useRoute);
-import jobRoute from "./src/routes/jobRoutes.js";
-app.use("/api/v1/job", jobRoute);
+// Routes
+import userRoute from './src/routes/userRoutes.js';
+import jobRoute from './src/routes/jobRoutes.js';
 
+app.use('/api/v2/user', userRoute);
+app.use('/api/v2/job', jobRoute);
+
+// Default route
+app.get('/', (req, res) => {
+  res.send('Home Page');
+});
+
+// Start server
 app.listen(port, () => {
-  console.log("Server Running on", port);
+  console.log(`Server running on port ${port}`);
 });
