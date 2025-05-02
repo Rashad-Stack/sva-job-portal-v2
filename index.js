@@ -31,8 +31,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Routes
-import userRoute from './src/routes/userRoutes.js';
-import jobRoute from './src/routes/jobRoutes.js';
+import userRoute from './src/routes/userRoute.js';
+import jobRoute from './src/routes/jobRoute.js';
 
 app.use('/api/v2/user', userRoute);
 app.use('/api/v2/job', jobRoute);
