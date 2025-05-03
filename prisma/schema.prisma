@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,51 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Modarator {
-  id        Int      @id @default(autoincrement())
-  jobs      Job[]    @relation("ModaratorJobs")
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(MODARATOR)
-  createdAt DateTime @default(now())
-}
-
-model Job {
-  id          String     @id @default(uuid())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  modaratorId Int?
-  modarator   Modarator? @relation(fields: [modaratorId], references: [id], name: "ModaratorJobs")
-
-  // Basic Information
-  title          String
-  companyName    String  @default("Softvence Agency")
-  numberOfHiring Int     @default(1)
-  appliedBy      Boolean @default(true)
-
-  // Job Details
-  location   String
-  jobType    JobType
-  jobLevel   JobLevel
-  category   Category
-  jobNature  JobNature
-  shift      Shift
-  googleForm String?
-
-  deadline DateTime
-
-  // Timestamps
-  publishedAt DateTime?
-  closedAt    DateTime?
-
-  @@index([jobType])
-  @@index([location])
-}
-
 enum Role {
   ADMIN
-  MODARATOR
+  MODERATOR
 }
 
 enum JobType {
@@ -67,16 +24,6 @@ enum JobLevel {
   ADVANCED_LEVEL
 }
 
-enum Category {
-  MERN
-  FRONT_END
-  BACK_END
-  UI_UX
-  FULL_STACK
-  LARAVEL
-  DJANGO
-}
-
 enum JobNature {
   ONSITE
   REMOTE
@@ -86,4 +33,104 @@ enum Shift {
   DAY
   NIGHT
   EVENING
+}
+
+enum ActionType {
+  ADD
+  EDIT
+  DELETE
+}
+
+model User {
+  id                String      @id @default(uuid())
+  name              String
+  email             String      @unique
+  password          String
+  role              Role
+  created_at        DateTime    @default(now())
+  jobs              Job[]       @relation("UserJobs")
+  categories        Category[]  @relation("UserCategories")
+  statuses          Status[]    @relation("UserStatuses")
+  jobIndexesCreated JobIndex[]  @relation("JobIndexCreatedBy")
+  jobIndexesUpdated JobIndex[]  @relation("JobIndexUpdatedBy")
+  changeLogs        ChangeLog[]
+}
+
+model Job {
+  id               String    @id @default(uuid())
+  title            String
+  company_name     String
+  number_of_hiring Int
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  user_id          String
+  user             User      @relation(fields: [user_id], references: [id], name: "UserJobs")
+  applied_by       Boolean
+  location         String
+  job_type         JobType
+  job_level        JobLevel
+  category_id      String
+  category         Category  @relation(fields: [category_id], references: [id])
+  job_nature       JobNature
+  shift            Shift
+  google_form      String
+  deadline         DateTime
+  published_at     DateTime
+  closed_at        DateTime
+}
+
+model Category {
+  id         String     @id @default(uuid())
+  name       String
+  created_by String
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  creator    User       @relation(fields: [created_by], references: [id], name: "UserCategories")
+  jobs       Job[]
+  jobIndexes JobIndex[]
+}
+
+model Status {
+  id         String     @id @default(uuid())
+  name       String
+  created_by String
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  creator    User       @relation(fields: [created_by], references: [id], name: "UserStatuses")
+  jobIndexes JobIndex[]
+}
+
+model JobIndex {
+  id                  String   @id @default(uuid())
+  title               String
+  job_index           String
+  sheet_link          String
+  admin_access        String
+  candidate_form_link String
+  status_id           String
+  category_id         String
+  created_by          String
+  updated_by          String
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  status     Status      @relation(fields: [status_id], references: [id])
+  category   Category    @relation(fields: [category_id], references: [id])
+  creator    User        @relation(fields: [created_by], references: [id], name: "JobIndexCreatedBy")
+  updater    User        @relation(fields: [updated_by], references: [id], name: "JobIndexUpdatedBy")
+  changeLogs ChangeLog[]
+}
+
+model ChangeLog {
+  id            String     @id @default(uuid())
+  user_id       String
+  job_index_id  String
+  action        ActionType
+  field_changed String
+  old_value     String
+  new_value     String
+  timestamp     DateTime   @default(now())
+
+  user     User     @relation(fields: [user_id], references: [id])
+  jobIndex JobIndex @relation(fields: [job_index_id], references: [id])
 }
