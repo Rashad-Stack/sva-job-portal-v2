@@ -135,7 +135,7 @@ export const updateJob = async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating job:', error);
-    res.status(500).json({ success: false, message: 'Error updating job', error: error.message });
+    res.status(500).json({ success: false, message: 'Error updating job' });
   }
 };
 
@@ -155,6 +155,6 @@ export const deleteJob = async (req, res) => {
     res.status(200).json({ success: true, message: 'Job deleted successfully' });
   } catch (error) {
     console.error('Error deleting job:', error);
-    res.status(500).json({ success: false, message: 'Error deleting job', error: error.message });
+    res.status(500).json({ success: false, message: 'Error deleting job' });
   }
 };

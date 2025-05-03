@@ -93,7 +93,7 @@ model Status {
 model JobIndex {
   id                String   @id @default(uuid())
   title             String
-  jobIndex          String
+  jobPost           String
   sheetLink         String
   adminAccess       String
   candidateFormLink String
