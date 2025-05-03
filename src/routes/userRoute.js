@@ -17,10 +17,10 @@ userRouter.post('/login', loginUser);
 userRouter.post('/logout', logoutUser);
 
 // User management
-userRouter.get('/:id', showUser); // GET /users/:id
-userRouter.put('/update/:id', updateUser); // PUT /users/:id
-userRouter.get('/all', verifyRole('ADMIN'), fetchUsers); // GET /users
-userRouter.post('/create', verifyRole('ADMIN'), createUser); // POST /users
-userRouter.delete('/delete/:id', verifyRole('ADMIN'), deleteUser); // DELETE /users/:id
+userRouter.get('/:id', showUser);
+userRouter.put('/update/:id', updateUser);
+userRouter.get('/all', verifyRole('ADMIN'), fetchUsers);
+userRouter.post('/create', verifyRole('ADMIN'), createUser);
+userRouter.delete('/delete/:id', verifyRole('ADMIN'), deleteUser);
 
 export default userRouter;
