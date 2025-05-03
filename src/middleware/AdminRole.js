@@ -1,43 +1,49 @@
 import jwt from 'jsonwebtoken';
 import prisma from '../DB/db.config.js';
 
-const verifyAdmin = (requiredRole, modaratorRole) => {
+const verifyRole = (...allowedRoles) => {
   return async (req, res, next) => {
     try {
-      const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+      const token = req.cookies?.sva_auth || req.headers.authorization?.split(' ')[1];
 
       if (!token) {
         return res.status(401).json({
           success: false,
-          message: 'No token provided, access denied.',
+          message: 'Access denied. No token provided.',
         });
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!decoded.id) {
+      if (!decoded?.id) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid token, user ID is missing.',
+          message: 'Invalid token. User ID missing.',
         });
       }
 
-      const modarator = await prisma.modarator.findUnique({
-        where: { id: decoded.id }, // Match `id` from the decoded token
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.id },
       });
 
-      if (!modarator) {
-        return res.status(401).json({ success: false, message: 'User not found, access denied.' });
+      if (!user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Access denied. User not found.',
+        });
       }
 
-      if (modarator.role !== requiredRole && modarator.role !== modaratorRole) {
-        return res.status(403).json({ success: false, message: 'Forbidden: Insufficient role' });
+      if (!allowedRoles.includes(user.role)) {
+        return res.status(403).json({
+          success: false,
+          message: 'Forbidden. Insufficient permissions.',
+        });
       }
 
-      req.modarator = modarator;
+      req.user = user;
       next();
     } catch (err) {
-      console.error(err);
+      console.error('verifyRole error:', err);
       res.status(500).json({
         success: false,
         message: 'Internal Server Error',
@@ -47,4 +53,4 @@ const verifyAdmin = (requiredRole, modaratorRole) => {
   };
 };
 
-export default verifyAdmin;
+export default verifyRole;

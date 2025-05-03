@@ -49,8 +49,6 @@ model User {
   role              Role
   created_at        DateTime    @default(now())
   jobs              Job[]       @relation("UserJobs")
-  categories        Category[]  @relation("UserCategories")
-  statuses          Status[]    @relation("UserStatuses")
   jobIndexesCreated JobIndex[]  @relation("JobIndexCreatedBy")
   jobIndexesUpdated JobIndex[]  @relation("JobIndexUpdatedBy")
   changeLogs        ChangeLog[]
@@ -82,10 +80,7 @@ model Job {
 model Category {
   id         String     @id @default(uuid())
   name       String
-  created_by String
   created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  creator    User       @relation(fields: [created_by], references: [id], name: "UserCategories")
   jobs       Job[]
   jobIndexes JobIndex[]
 }
@@ -93,10 +88,7 @@ model Category {
 model Status {
   id         String     @id @default(uuid())
   name       String
-  created_by String
   created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  creator    User       @relation(fields: [created_by], references: [id], name: "UserStatuses")
   jobIndexes JobIndex[]
 }
 

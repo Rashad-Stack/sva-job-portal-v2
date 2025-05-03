@@ -125,7 +125,7 @@ export const loginUser = async (req, res) => {
       { expiresIn: '1d' }
     );
 
-    res.cookie('token', token, {
+    res.cookie('sva_auth', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -146,7 +146,7 @@ export const loginUser = async (req, res) => {
 // Logout
 export const logoutUser = (req, res) => {
   try {
-    res.clearCookie('token', {
+    res.clearCookie('sva_auth', {
       httpOnly: true,
       sameSite: 'strict',
     });
