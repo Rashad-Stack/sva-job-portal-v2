@@ -73,7 +73,6 @@ model Job {
   shift          Shift
   googleForm     String
   deadline       DateTime
-  publishedAt    DateTime
 }
 
 model Category {
