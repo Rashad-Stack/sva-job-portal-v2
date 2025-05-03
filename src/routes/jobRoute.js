@@ -11,18 +11,18 @@ import {
 const jobRouter = express.Router();
 
 // Public: Get all jobs
-jobRouter.get('/', fetchJobs); // GET /jobs
+jobRouter.get('/all', fetchJobs); // GET /jobs
 
 // Public: Get a single job by ID
 jobRouter.get('/:id', showJob); // GET /jobs/:id
 
 // Admin/Moderator: Create a new job
-jobRouter.post('/', verifyRole('ADMIN', 'MODERATOR'), createJob); // POST /jobs
+jobRouter.post('/create', verifyRole('ADMIN', 'MODERATOR'), createJob); // POST /jobs
 
 // Admin/Moderator: Update job
-jobRouter.put('/:id', verifyRole('ADMIN', 'MODERATOR'), updateJob); // PUT /jobs/:id
+jobRouter.put('/update/:id', verifyRole('ADMIN', 'MODERATOR'), updateJob); // PUT /jobs/:id
 
 // Admin/Moderator: Delete job
-jobRouter.delete('/:id', verifyRole('ADMIN', 'MODERATOR'), deleteJob); // DELETE /jobs/:id
+jobRouter.delete('/delete/:id', verifyRole('ADMIN', 'MODERATOR'), deleteJob); // DELETE /jobs/:id
 
 export default jobRouter;
