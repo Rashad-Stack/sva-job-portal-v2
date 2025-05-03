@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import authenticateUser from './src/middleware/auth.js';
 
 // Load environment variables
 dotenv.config();
@@ -30,17 +31,22 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
-import userRoute from './src/routes/userRoute.js';
-import jobRoute from './src/routes/jobRoute.js';
-
-app.use('/api/v2/user', userRoute);
-app.use('/api/v2/job', jobRoute);
-
-// Default route
+// Public routes (no authentication required)
 app.get('/', (req, res) => {
   res.send('Home Page');
 });
+
+// Apply authentication middleware to all other routes
+app.use(authenticateUser);
+
+// Protected routes
+import userRoute from './src/routes/userRoute.js';
+import jobRoute from './src/routes/jobRoute.js';
+import categoryRoute from './src/routes/categoryRoutes.js';
+
+app.use('/api/v2/user', userRoute);
+app.use('/api/v2/job', jobRoute);
+app.use('/api/v2/category', categoryRoute);
 
 // Start server
 app.listen(port, () => {

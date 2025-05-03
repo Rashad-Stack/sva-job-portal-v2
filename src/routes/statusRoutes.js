@@ -1,7 +1,4 @@
 import express from 'express';
-import verifyRole from '../middleware/AdminRole';
-
-// import {} from '../controllers/statusController.js';
 
 const statusRouter = express.Router();
 

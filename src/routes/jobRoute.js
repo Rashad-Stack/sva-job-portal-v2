@@ -1,5 +1,4 @@
 import express from 'express';
-import verifyRole from '../middleware/AdminRole.js';
 import {
   createJob,
   deleteJob,
@@ -17,12 +16,12 @@ jobRouter.get('/all', fetchJobs); // GET /jobs
 jobRouter.get('/:id', showJob); // GET /jobs/:id
 
 // Admin/Moderator: Create a new job
-jobRouter.post('/create', verifyRole('ADMIN', 'MODERATOR'), createJob); // POST /jobs
+jobRouter.post('/create', createJob); // POST /jobs
 
 // Admin/Moderator: Update job
-jobRouter.put('/update/:id', verifyRole('ADMIN', 'MODERATOR'), updateJob); // PUT /jobs/:id
+jobRouter.put('/update/:id', updateJob); // PUT /jobs/:id
 
 // Admin/Moderator: Delete job
-jobRouter.delete('/delete/:id', verifyRole('ADMIN', 'MODERATOR'), deleteJob); // DELETE /jobs/:id
+jobRouter.delete('/delete/:id', deleteJob); // DELETE /jobs/:id
 
 export default jobRouter;

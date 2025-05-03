@@ -1,4 +1,4 @@
-import prisma from '../DB/db.config';
+import prisma from '../DB/db.config.js';
 
 // Fetch all category
 export const fetchCategories = async (req, res) => {
@@ -67,7 +67,44 @@ export const updateCategory = async (req, res) => {
     console.error('Error updating category:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error',
+      message: 'Error updating category',
+      error: error.message,
+    });
+  }
+};
+
+// Delete category
+export const deleteCategory = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    // Check if category exists
+    const existingCategory = await prisma.category.findUnique({
+      where: { id },
+    });
+
+    if (!existingCategory) {
+      return res.status(404).json({
+        success: false,
+        message: 'Category not found',
+      });
+    }
+
+    // Delete the category
+    await prisma.category.delete({
+      where: { id },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Category deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting category',
+      error: error.message,
     });
   }
 };

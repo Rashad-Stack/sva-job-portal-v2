@@ -1,5 +1,4 @@
 import express from 'express';
-import verifyRole from '../middleware/AdminRole';
 import {
   createCategory,
   deleteCategory,
@@ -9,16 +8,16 @@ import {
 
 const categoryRouter = express.Router();
 
-// Public: Get all categories
+// Get all categories (no role check needed)
 categoryRouter.get('/all', fetchCategories);
 
-// Admin/Moderator: Create category
-categoryRouter.post('/create', verifyRole('ADMIN', 'MODERATOR'), createCategory);
+// Create category (admin only)
+categoryRouter.post('/create', createCategory);
 
-// Admin/Moderator: Update category
-categoryRouter.put('/update', verifyRole('ADMIN', 'MODERATOR'), updateCategory);
+// Update category (no role check needed)
+categoryRouter.put('/update', updateCategory);
 
-// Admin/Moderator: Delete category
-categoryRouter.delete('/delete/:id', verifyRole('ADMIN', 'MODERATOR'), deleteCategory);
+// Delete category (admin only)
+categoryRouter.delete('/delete/:id', deleteCategory);
 
 export default categoryRouter;
