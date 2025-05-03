@@ -3,26 +3,26 @@ import verifyRole from '../middleware/AdminRole.js';
 import {
   createJob,
   deleteJob,
-  fetchJob,
+  fetchJobs,
   showJob,
   updateJob,
 } from '../controllers/jobController.js';
 
-const jobRoute = express.Router();
+const jobRouter = express.Router();
 
-// Public route to fetch all jobs (no auth)
-jobRoute.get('/all', fetchJob);
+// Public: Get all jobs
+jobRouter.get('/', fetchJobs); // GET /jobs
 
-// Admin-only route to create a job
-jobRoute.post('/create', verifyRole('ADMIN', 'MODARATOR'), createJob);
+// Public: Get a single job by ID
+jobRouter.get('/:id', showJob); // GET /jobs/:id
 
-// Public route to view a job by ID
-jobRoute.get('/:id', showJob);
+// Admin/Moderator: Create a new job
+jobRouter.post('/', verifyRole('ADMIN', 'MODERATOR'), createJob); // POST /jobs
 
-// Admin-only route to update a job
-jobRoute.put('/update/:id', verifyRole('ADMIN', 'MODARATOR'), updateJob);
+// Admin/Moderator: Update job
+jobRouter.put('/:id', verifyRole('ADMIN', 'MODERATOR'), updateJob); // PUT /jobs/:id
 
-// Admin-only route to delete a job
-jobRoute.delete('/delete/:id', verifyRole('ADMIN', 'MODARATOR'), deleteJob);
+// Admin/Moderator: Delete job
+jobRouter.delete('/:id', verifyRole('ADMIN', 'MODERATOR'), deleteJob); // DELETE /jobs/:id
 
-export default jobRoute;
+export default jobRouter;

@@ -3,21 +3,24 @@ import verifyRole from '../middleware/AdminRole.js';
 import {
   createUser,
   deleteUser,
-  fetchUser,
-  LoginUser,
+  fetchUsers,
+  loginUser,
   logoutUser,
   showUser,
   updateUser,
 } from '../controllers/userController.js';
 
-const User = express.Router();
+const userRouter = express.Router();
 
-User.get('/all', verifyRole('ADMIN'), fetchUser);
-User.post('/create', verifyRole('ADMIN'), createUser);
-User.get('/:id', verifyRole('ADMIN', 'MODARATOR'), showUser);
-User.put('/update/:id', verifyRole('ADMIN', 'MODARATOR'), updateUser);
-User.delete('/delete/:id', verifyRole('ADMIN'), deleteUser);
-User.post('/login', LoginUser);
-User.post('/logout', logoutUser);
+// Auth routes
+userRouter.post('/login', loginUser);
+userRouter.post('/logout', logoutUser);
 
-export default User;
+// User management
+userRouter.get('/', verifyRole('ADMIN'), fetchUsers); // GET /users
+userRouter.post('/', verifyRole('ADMIN'), createUser); // POST /users
+userRouter.get('/:id', verifyRole('ADMIN', 'MODERATOR'), showUser); // GET /users/:id
+userRouter.put('/:id', verifyRole('ADMIN', 'MODERATOR'), updateUser); // PUT /users/:id
+userRouter.delete('/:id', verifyRole('ADMIN'), deleteUser); // DELETE /users/:id
+
+export default userRouter;
