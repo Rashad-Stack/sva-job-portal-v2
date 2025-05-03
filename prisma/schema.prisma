@@ -112,14 +112,13 @@ model JobIndex {
 }
 
 model ChangeLog {
-  id           String     @id @default(uuid())
-  userId       String
-  jobIndexId   String
-  action       ActionType
-  fieldChanged String
-  oldValue     String
-  newValue     String
-  timestamp    DateTime   @default(now())
+  id         String     @id @default(uuid())
+  userId     String
+  jobIndexId String
+  action     ActionType
+  oldValue   String
+  newValue   String
+  timestamp  DateTime   @default(now())
 
   user     User     @relation(fields: [userId], references: [id])
   jobIndex JobIndex @relation(fields: [jobIndexId], references: [id])

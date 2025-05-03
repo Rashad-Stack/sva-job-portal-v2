@@ -3,8 +3,8 @@ import prisma from '../DB/db.config.js';
 
 const authenticateUser = async (req, res, next) => {
   try {
-    const token = req.cookies?.sva_auth || req.headers.authorization?.split(' ')[1];
-
+    const token = req.cookies?.sva_auth;
+    console.log(token);
     if (!token) {
       return res.status(401).json({
         success: false,
@@ -13,7 +13,7 @@ const authenticateUser = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+    console.log(decoded);
     if (!decoded?.id) {
       return res.status(401).json({
         success: false,
@@ -22,7 +22,7 @@ const authenticateUser = async (req, res, next) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
+      where: { email: decoded.email },
     });
 
     if (!user) {
