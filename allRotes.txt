@@ -1,4 +1,4 @@
-create user = http://localhost:3000/api/v1/user/create
+create user = http://localhost:3000/api/v2/user/create
 method=post
 get all user = http://localhost:3000/user/all
 method=get
@@ -17,7 +17,7 @@ method = post
 job
 create job = http://localhost:3000/job/create
 method = post
-get all jobs =http://localhost:3000/api/v1/job/all
+get all jobs =http://localhost:3000/api/v2/job/all
 method = get
 get single job = http://localhost:3000/job/:jobId
 method = get
