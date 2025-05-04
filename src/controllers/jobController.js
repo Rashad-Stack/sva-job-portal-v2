@@ -1,4 +1,4 @@
-import prisma from '../DB/db.config.js';
+import prisma from "../DB/db.config.js";
 
 // Fetch all jobs
 export const fetchJobs = async (req, res) => {
@@ -7,19 +7,18 @@ export const fetchJobs = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Jobs fetched successfully',
+      message: "Jobs fetched successfully",
       data: jobs,
     });
   } catch (error) {
-    console.error('Error fetching jobs:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 // Create a job
 export const createJob = async (req, res) => {
   const userId = req.user?.id;
-
   const {
     title,
     companyName,
@@ -56,12 +55,16 @@ export const createJob = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Job created successfully',
+      message: "Job created successfully",
       data: newJob,
     });
   } catch (error) {
-    console.error('Error creating job:', error);
-    res.status(500).json({ success: false, message: 'Error creating job', error: error.message });
+    console.error("Error creating job:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error creating job",
+      error: error.message,
+    });
   }
 };
 
@@ -75,13 +78,15 @@ export const showJob = async (req, res) => {
     });
 
     if (!job) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
 
-    res.status(200).json({ success: true, message: 'Job fetched successfully', data: job });
+    res
+      .status(200)
+      .json({ success: true, message: "Job fetched successfully", data: job });
   } catch (error) {
-    console.error('Error fetching job:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching job:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -107,7 +112,7 @@ export const updateJob = async (req, res) => {
     const existingJob = await prisma.job.findUnique({ where: { id: jobId } });
 
     if (!existingJob) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
 
     const updatedJob = await prisma.job.update({
@@ -130,12 +135,12 @@ export const updateJob = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Job updated successfully',
+      message: "Job updated successfully",
       data: updatedJob,
     });
   } catch (error) {
-    console.error('Error updating job:', error);
-    res.status(500).json({ success: false, message: 'Error updating job' });
+    console.error("Error updating job:", error);
+    res.status(500).json({ success: false, message: "Error updating job" });
   }
 };
 
@@ -147,14 +152,16 @@ export const deleteJob = async (req, res) => {
     const existingJob = await prisma.job.findUnique({ where: { id: jobId } });
 
     if (!existingJob) {
-      return res.status(404).json({ success: false, message: 'Job not found' });
+      return res.status(404).json({ success: false, message: "Job not found" });
     }
 
     await prisma.job.delete({ where: { id: jobId } });
 
-    res.status(200).json({ success: true, message: 'Job deleted successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "Job deleted successfully" });
   } catch (error) {
-    console.error('Error deleting job:', error);
-    res.status(500).json({ success: false, message: 'Error deleting job' });
+    console.error("Error deleting job:", error);
+    res.status(500).json({ success: false, message: "Error deleting job" });
   }
 };

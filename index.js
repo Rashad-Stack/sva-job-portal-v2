@@ -1,8 +1,8 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import authenticateUser from './src/middleware/auth.js';
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import authenticateUser from "./src/middleware/auth.js";
 
 // Load environment variables
 dotenv.config();
@@ -12,18 +12,18 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // CORS configuration
-const allowedOrigins = ['http://localhost:5174', 'http://localhost:5173'];
+const allowedOrigins = ["http://localhost:5174", "http://localhost:5173"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 // Middleware
@@ -32,8 +32,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Public routes
-app.get('/', (req, res) => {
-  res.send('Home Page');
+app.get("/", (req, res) => {
+  res.send("Home Page");
 });
 
 // Add this before the authenticateUser middleware
@@ -49,18 +49,18 @@ app.get('/', (req, res) => {
 // authentication middleware
 // app.use(authenticateUser);
 
-import userRoute from './src/routes/userRoutes.js';
-import jobRoute from './src/routes/jobRoutes.js';
-import categoryRoute from './src/routes/categoryRoutes.js';
-import jobIndexRouter from './src/routes/jobIndexRoutes.js';
-import statusRoutes from './src/routes/statusRoutes.js';
+import userRoute from "./src/routes/userRoutes.js";
+import jobRoute from "./src/routes/jobRoutes.js";
+import categoryRoute from "./src/routes/categoryRoutes.js";
+import jobIndexRouter from "./src/routes/jobIndexRoutes.js";
+import statusRoutes from "./src/routes/statusRoutes.js";
 
 // Protected routes
-app.use('/api/v2/user', userRoute);
-app.use('/api/v2/job', authenticateUser, jobRoute);
-app.use('/api/v2/category', authenticateUser, categoryRoute);
-app.use('/api/v2/status', authenticateUser, statusRoutes);
-app.use('/api/v2/job-index', authenticateUser, jobIndexRouter);
+app.use("/api/v2/user", userRoute);
+app.use("/api/v2/job", jobRoute);
+app.use("/api/v2/category", categoryRoute);
+app.use("/api/v2/status", authenticateUser, statusRoutes);
+app.use("/api/v2/job-index", authenticateUser, jobIndexRouter);
 
 // Start server
 app.listen(port, () => {

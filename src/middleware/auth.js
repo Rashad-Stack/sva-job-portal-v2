@@ -1,18 +1,18 @@
-import jwt from 'jsonwebtoken';
-import prisma from '../DB/db.config.js';
+import jwt from "jsonwebtoken";
+import prisma from "../DB/db.config.js";
 
 const authenticateUser = async (req, res, next) => {
   try {
-    let token = req.cookies?.sva_auth;
+    let token = req.cookies?.svaAuth;
 
-    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
-      token = req.headers.authorization.split(' ')[1];
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Access denied. No token provided.',
+        message: "Access denied. No token provided.",
       });
     }
 
@@ -21,7 +21,7 @@ const authenticateUser = async (req, res, next) => {
     if (!decoded?.id) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token. User ID missing.',
+        message: "Invalid token. User ID missing.",
       });
     }
 
@@ -32,7 +32,7 @@ const authenticateUser = async (req, res, next) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Access denied. User not found.',
+        message: "Access denied. User not found.",
       });
     }
 
@@ -42,10 +42,10 @@ const authenticateUser = async (req, res, next) => {
     req.user = safeUser;
     next();
   } catch (err) {
-    console.error('Authentication error:', err);
+    console.error("Authentication error:", err);
     res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: "Internal Server Error",
       error: err.message,
     });
   }

@@ -1,6 +1,6 @@
-import prisma from '../DB/db.config.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import prisma from "../DB/db.config.js";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // Get all users
 export const fetchUsers = async (req, res) => {
@@ -8,8 +8,8 @@ export const fetchUsers = async (req, res) => {
     const users = await prisma.user.findMany();
     res.status(200).json({ success: true, data: users });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -22,7 +22,7 @@ export const createUser = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
-        message: 'Email already taken. Please use another.',
+        message: "Email already taken. Please use another.",
       });
     }
 
@@ -42,11 +42,11 @@ export const createUser = async (req, res) => {
     res.status(201).json({
       success: true,
       data: userWithoutPassword,
-      message: 'User created successfully.',
+      message: "User created successfully.",
     });
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ message: 'Failed to create user' });
+    console.error("Error creating user:", error);
+    res.status(500).json({ message: "Failed to create user" });
   }
 };
 
@@ -60,13 +60,13 @@ export const showUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({ success: true, data: user });
   } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -87,10 +87,12 @@ export const updateUser = async (req, res) => {
       data: updateData,
     });
 
-    res.status(200).json({ success: true, message: 'User updated successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "User updated successfully" });
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Failed to update user' });
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Failed to update user" });
   }
 };
 
@@ -101,10 +103,12 @@ export const deleteUser = async (req, res) => {
   try {
     await prisma.user.delete({ where: { id: userId } });
 
-    res.status(200).json({ success: true, message: 'User deleted successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully" });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ message: 'Failed to delete user' });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Failed to delete user" });
   }
 };
 
@@ -116,44 +120,49 @@ export const loginUser = async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const token = jwt.sign(
       { id: user.id, name: user.name, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: "1d" }
     );
 
-    res.cookie('sva_auth', token, {
+    res.cookie("svaAuth", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
       maxAge: 72 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Login failed' });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Login failed" });
   }
 };
 
 // Logout
 export const logoutUser = (req, res) => {
   try {
-    res.clearCookie('sva_auth', {
+    res.clearCookie("svaAuth", {
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: "strict",
     });
 
-    res.status(200).json({ message: 'Logout successful' });
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ message: 'Logout failed' });
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Logout failed" });
   }
 };

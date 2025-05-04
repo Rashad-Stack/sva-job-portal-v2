@@ -1,4 +1,4 @@
-import prisma from '../DB/db.config.js';
+import prisma from "../DB/db.config.js";
 
 // Fetch all statuses
 export const fetchStatuses = async (req, res) => {
@@ -6,15 +6,37 @@ export const fetchStatuses = async (req, res) => {
     const statuses = await prisma.status.findMany();
     res.status(200).json({
       success: true,
-      message: 'Statuses fetched successfully',
+      message: "Statuses fetched successfully",
       data: statuses,
     });
   } catch (error) {
-    console.error('Error fetching statuses:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching statuses:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+export const fetchSingleStatus = async (req, res) => {
+  const statusId = req.params.id;
+  try {
+    const status = await prisma.status.findUnique({
+      where: { id: statusId },
+    });
 
+    if (!status) {
+      return res
+        .status(404)
+        .json({ success: false, message: "status not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "status fetched successfully",
+      data: status,
+    });
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 // Create a status
 export const createStatus = async (req, res) => {
   const { name } = req.body;
@@ -24,12 +46,12 @@ export const createStatus = async (req, res) => {
     });
     res.status(201).json({
       success: true,
-      message: 'Status created successfully',
+      message: "Status created successfully",
       data: newStatus,
     });
   } catch (error) {
-    console.error('Error creating status:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error creating status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -43,7 +65,7 @@ export const updateStatus = async (req, res) => {
     if (!existingStatus) {
       return res.status(404).json({
         success: false,
-        message: 'Status not found',
+        message: "Status not found",
       });
     }
 
@@ -54,14 +76,14 @@ export const updateStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Status updated successfully',
+      message: "Status updated successfully",
       data: updatedStatus,
     });
   } catch (error) {
-    console.error('Error updating status:', error);
+    console.error("Error updating status:", error);
     res.status(500).json({
       success: false,
-      message: 'Error updating status',
+      message: "Error updating status",
     });
   }
 };
@@ -76,7 +98,7 @@ export const deleteStatus = async (req, res) => {
     if (!existingStatus) {
       return res.status(404).json({
         success: false,
-        message: 'Status not found',
+        message: "Status not found",
       });
     }
 
@@ -84,13 +106,13 @@ export const deleteStatus = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Status deleted successfully',
+      message: "Status deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting status:', error);
+    console.error("Error deleting status:", error);
     res.status(500).json({
       success: false,
-      message: 'Error deleting status',
+      message: "Error deleting status",
     });
   }
 };

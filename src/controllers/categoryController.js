@@ -1,4 +1,4 @@
-import prisma from '../DB/db.config.js';
+import prisma from "../DB/db.config.js";
 
 // Fetch all category
 export const fetchCategories = async (req, res) => {
@@ -6,12 +6,35 @@ export const fetchCategories = async (req, res) => {
     const categories = await prisma.category.findMany();
     res.status(200).json({
       success: true,
-      message: 'Categories fetched successfully',
+      message: "Categories fetched successfully",
       data: categories,
     });
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching categories:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+export const fetchSingleCategory = async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!category) {
+      return res
+        .status(404)
+        .json({ success: false, message: "category not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "category fetched successfully",
+      data: category,
+    });
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -26,18 +49,18 @@ export const createCategory = async (req, res) => {
     });
     res.status(201).json({
       success: true,
-      message: 'Category created successfully',
+      message: "Category created successfully",
       data: newCategory,
     });
   } catch (error) {
-    console.error('Error creating category:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error creating category:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 // Update category
 export const updateCategory = async (req, res) => {
-  const { id, name } = req.body; // Get both id and name from request body
+  const { id, name } = req.body;
 
   try {
     // Check if category exists
@@ -48,7 +71,7 @@ export const updateCategory = async (req, res) => {
     if (!existingCategory) {
       return res.status(404).json({
         success: false,
-        message: 'Category not found',
+        message: "Category not found",
       });
     }
 
@@ -60,14 +83,14 @@ export const updateCategory = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Category updated successfully',
+      message: "Category updated successfully",
       data: updatedCategory,
     });
   } catch (error) {
-    console.error('Error updating category:', error);
+    console.error("Error updating category:", error);
     res.status(500).json({
       success: false,
-      message: 'Error updating category',
+      message: "Error updating category",
     });
   }
 };
@@ -85,7 +108,7 @@ export const deleteCategory = async (req, res) => {
     if (!existingCategory) {
       return res.status(404).json({
         success: false,
-        message: 'Category not found',
+        message: "Category not found",
       });
     }
 
@@ -96,13 +119,13 @@ export const deleteCategory = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'Category deleted successfully',
+      message: "Category deleted successfully",
     });
   } catch (error) {
-    console.error('Error deleting category:', error);
+    console.error("Error deleting category:", error);
     res.status(500).json({
       success: false,
-      message: 'Error deleting category',
+      message: "Error deleting category",
     });
   }
 };

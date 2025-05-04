@@ -67,8 +67,8 @@ model Job {
   location       String
   jobType        JobType
   jobLevel       JobLevel
-  categoryId     String
-  category       Category  @relation(fields: [categoryId], references: [id])
+  categoryId     String?
+  category       Category?  @relation(fields: [categoryId], references: [id])
   jobNature      JobNature
   shift          Shift
   googleForm     String
@@ -98,14 +98,14 @@ model JobIndex {
   adminAccess       String
   candidateFormLink String
   statusId          String
-  categoryId        String
+  categoryId        String?
   createdBy         String?
   updatedBy         String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   status     Status      @relation(fields: [statusId], references: [id])
-  category   Category    @relation(fields: [categoryId], references: [id])
+  category   Category?    @relation(fields: [categoryId], references: [id])
   creator    User?       @relation(fields: [createdBy], references: [id], name: "JobIndexCreatedBy")
   updater    User?       @relation(fields: [updatedBy], references: [id], name: "JobIndexUpdatedBy")
   changeLogs ChangeLog[]

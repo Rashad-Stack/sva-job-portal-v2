@@ -1,15 +1,16 @@
-import jwt from 'jsonwebtoken';
-import prisma from '../DB/db.config.js';
+import jwt from "jsonwebtoken";
+import prisma from "../DB/db.config.js";
 
 const verifyRole = (...allowedRoles) => {
   return async (req, res, next) => {
     try {
-      const token = req.cookies?.sva_auth || req.headers.authorization?.split(' ')[1];
+      const token =
+        req.cookies?.svaAuth || req.headers.authorization?.split(" ")[1];
 
       if (!token) {
         return res.status(401).json({
           success: false,
-          message: 'Access denied. No token provided.',
+          message: "Access denied. No token provided.",
         });
       }
 
@@ -18,7 +19,7 @@ const verifyRole = (...allowedRoles) => {
       if (!decoded?.id) {
         return res.status(401).json({
           success: false,
-          message: 'Invalid token. User ID missing.',
+          message: "Invalid token. User ID missing.",
         });
       }
 
@@ -29,24 +30,24 @@ const verifyRole = (...allowedRoles) => {
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: 'Access denied. User not found.',
+          message: "Access denied. User not found.",
         });
       }
 
       if (!allowedRoles.includes(user.role)) {
         return res.status(403).json({
           success: false,
-          message: 'Forbidden. Insufficient permissions.',
+          message: "Forbidden. Insufficient permissions.",
         });
       }
 
       req.user = user;
       next();
     } catch (err) {
-      console.error('verifyRole error:', err);
+      console.error("verifyRole error:", err);
       res.status(500).json({
         success: false,
-        message: 'Internal Server Error',
+        message: "Internal Server Error",
         error: err.message,
       });
     }
