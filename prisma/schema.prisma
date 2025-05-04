@@ -99,27 +99,26 @@ model JobIndex {
   candidateFormLink String
   statusId          String
   categoryId        String
-  createdBy         String
-  updatedBy         String
+  createdBy         String?
+  updatedBy         String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   status     Status      @relation(fields: [statusId], references: [id])
   category   Category    @relation(fields: [categoryId], references: [id])
-  creator    User        @relation(fields: [createdBy], references: [id], name: "JobIndexCreatedBy")
-  updater    User        @relation(fields: [updatedBy], references: [id], name: "JobIndexUpdatedBy")
+  creator    User?       @relation(fields: [createdBy], references: [id], name: "JobIndexCreatedBy")
+  updater    User?       @relation(fields: [updatedBy], references: [id], name: "JobIndexUpdatedBy")
   changeLogs ChangeLog[]
 }
 
 model ChangeLog {
   id         String     @id @default(uuid())
   userId     String
-  jobIndexId String
+  jobIndexId String?
   action     ActionType
-  oldValue   String
-  newValue   String
+  oldValue   String?
+  newValue   String?
   timestamp  DateTime   @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  jobIndex JobIndex @relation(fields: [jobIndexId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  jobIndex   JobIndex?  @relation(fields: [jobIndexId], references: [id])
 }

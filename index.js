@@ -31,22 +31,36 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// Public routes (no authentication required)
+// Public routes
 app.get('/', (req, res) => {
   res.send('Home Page');
 });
 
-// Apply authentication middleware to all other routes
-app.use(authenticateUser);
+// Add this before the authenticateUser middleware
+// app.use((req, res, next) => {
+//   console.log('Auth Debug:', {
+//     authHeader: req.headers.authorization,
+//     cookies: req.cookies,
+//     token: req.cookies.token || req.headers.authorization?.split(' ')[1] || 'No token found',
+//   });
+//   next();
+// });
+
+// authentication middleware
+// app.use(authenticateUser);
+
+import userRoute from './src/routes/userRoutes.js';
+import jobRoute from './src/routes/jobRoutes.js';
+import categoryRoute from './src/routes/categoryRoutes.js';
+import jobIndexRouter from './src/routes/jobIndexRoutes.js';
+import statusRoutes from './src/routes/statusRoutes.js';
 
 // Protected routes
-import userRoute from './src/routes/userRoute.js';
-import jobRoute from './src/routes/jobRoute.js';
-import categoryRoute from './src/routes/categoryRoutes.js';
-
 app.use('/api/v2/user', userRoute);
-app.use('/api/v2/job', jobRoute);
-app.use('/api/v2/category', categoryRoute);
+app.use('/api/v2/job', authenticateUser, jobRoute);
+app.use('/api/v2/category', authenticateUser, categoryRoute);
+app.use('/api/v2/status', authenticateUser, statusRoutes);
+app.use('/api/v2/job-index', authenticateUser, jobIndexRouter);
 
 // Start server
 app.listen(port, () => {

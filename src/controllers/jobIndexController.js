@@ -23,15 +23,44 @@ export const fetchJobIndex = async (req, res) => {
   }
 };
 
-import { ActionType } from '@prisma/client'; // make sure this import points to your enums
+// Show JobIndex by ID
+export const showJobIndexById = async (req, res) => {
+  const jobIndexId = req.params.id;
 
+  try {
+    const jobIndex = await prisma.jobIndex.findUnique({
+      where: { id: jobIndexId },
+      include: {
+        status: true,
+        category: true,
+        creator: { select: { id: true, name: true } },
+        updater: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!jobIndex) {
+      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'JobIndex fetched successfully',
+      data: jobIndex,
+    });
+  } catch (error) {
+    console.error('Error fetching jobIndex:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+// Create JobIndex
 export const createJobIndex = async (req, res) => {
-  const userId = req.user?.id; // assuming you're injecting user into req via middleware
+  const userId = req.user?.id;
   const { title, jobPost, sheetLink, adminAccess, candidateFormLink, statusId, categoryId } =
     req.body;
 
   try {
-    // Step 1: Create the JobIndex
+    // Create the JobIndex
     const newJobIndex = await prisma.jobIndex.create({
       data: {
         title,
@@ -42,17 +71,15 @@ export const createJobIndex = async (req, res) => {
         statusId,
         categoryId,
         createdBy: userId,
-        updatedBy: '',
       },
     });
 
-    // Step 2: Create ChangeLog entry
+    // Create ChangeLog entry
     await prisma.changeLog.create({
       data: {
         userId,
         jobIndexId: newJobIndex.id,
         action: 'ADD',
-        oldValue: '',
         newValue: JSON.stringify({
           title,
           jobPost,
@@ -65,7 +92,7 @@ export const createJobIndex = async (req, res) => {
       },
     });
 
-    // Step 3: Respond
+    // Respond
     res.status(201).json({
       success: true,
       message: 'JobIndex created successfully',
@@ -80,91 +107,101 @@ export const createJobIndex = async (req, res) => {
   }
 };
 
-// Show JobIndex by ID
-// export const showJobIndex = async (req, res) => {
-//   const jobIndexId = req.params.id;
+// Update JobIndex
+export const updateJobIndex = async (req, res) => {
+  const userId = req.user?.id;
+  const jobIndexId = req.params.id;
+  const { title, jobPost, sheetLink, adminAccess, candidateFormLink, statusId, categoryId } =
+    req.body;
 
-//   try {
-//     const jobIndex = await prisma.jobIndex.findUnique({
-//       where: { id: jobIndexId },
-//       include: {
-//         status: true,
-//         category: true,
-//         creator: { select: { id: true, name: true } },
-//         updater: { select: { id: true, name: true } },
-//       },
-//     });
+  try {
+    const existingJobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
 
-//     if (!jobIndex) {
-//       return res.status(404).json({ success: false, message: 'JobIndex not found' });
-//     }
+    if (!existingJobIndex) {
+      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+    }
 
-//     res.status(200).json({
-//       success: true,
-//       message: 'JobIndex fetched successfully',
-//       data: jobIndex,
-//     });
-//   } catch (error) {
-//     console.error('Error fetching jobIndex:', error);
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
+    // update the JobIndex
+    const updatedJobIndex = await prisma.jobIndex.update({
+      where: { id: jobIndexId },
+      data: {
+        title,
+        jobPost,
+        sheetLink,
+        adminAccess,
+        candidateFormLink,
+        statusId,
+        categoryId,
+        updatedBy: userId,
+      },
+    });
 
-// // Update JobIndex
-// export const updateJobIndex = async (req, res) => {
-//   const userId = req.user?.id;
-//   const jobIndexId = req.params.id;
-//   const { title, jobPost, sheetLink, adminAccess, candidateFormLink, statusId, categoryId } =
-//     req.body;
+    // Create ChangeLog entry
+    await prisma.changeLog.create({
+      data: {
+        userId,
+        jobIndexId: jobIndexId,
+        action: 'EDIT',
+        oldValue: JSON.stringify(existingJobIndex),
+        newValue: JSON.stringify({
+          title,
+          jobPost,
+          sheetLink,
+          adminAccess,
+          candidateFormLink,
+          statusId,
+          categoryId,
+        }),
+      },
+    });
 
-//   try {
-//     const existingJobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
+    res.status(200).json({
+      success: true,
+      message: 'JobIndex updated successfully',
+      data: updatedJobIndex,
+    });
+  } catch (error) {
+    console.error('Error updating jobIndex:', error);
+    res.status(500).json({ success: false, message: 'Error updating jobIndex' });
+  }
+};
 
-//     if (!existingJobIndex) {
-//       return res.status(404).json({ success: false, message: 'JobIndex not found' });
-//     }
+// Delete JobIndex
+export const deleteJobIndex = async (req, res) => {
+  const userId = req.user?.id;
+  const jobIndexId = req.params.id;
 
-//     const updatedJobIndex = await prisma.jobIndex.update({
-//       where: { id: jobIndexId },
-//       data: {
-//         title,
-//         jobPost,
-//         sheetLink,
-//         adminAccess,
-//         candidateFormLink,
-//         statusId,
-//         categoryId,
-//         updatedBy: userId,
-//       },
-//     });
+  try {
+    const jobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
 
-//     res.status(200).json({
-//       success: true,
-//       message: 'JobIndex updated successfully',
-//       data: updatedJobIndex,
-//     });
-//   } catch (error) {
-//     console.error('Error updating jobIndex:', error);
-//     res.status(500).json({ success: false, message: 'Error updating jobIndex' });
-//   }
-// };
+    if (!jobIndex) {
+      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+    }
 
-// // Delete JobIndex
-// export const deleteJobIndex = async (req, res) => {
-//   const jobIndexId = req.params.id; // ✅ Use route param instead of body
+    // Create a change log BEFORE deletion
+    await prisma.changeLog.create({
+      data: {
+        userId,
+        jobIndexId,
+        action: 'DELETE',
+        oldValue: JSON.stringify({
+          title: jobIndex.title,
+          jobPost: jobIndex.jobPost,
+          sheetLink: jobIndex.sheetLink,
+          adminAccess: jobIndex.adminAccess,
+          candidateFormLink: jobIndex.candidateFormLink,
+          statusId: jobIndex.statusId,
+          categoryId: jobIndex.categoryId,
+        }),
+      },
+    });
 
-//   try {
-//     const existingJobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
+    // Delete the job index
+    await prisma.jobIndex.delete({ where: { id: jobIndexId } });
 
-//     if (!existingJobIndex) {
-//       return res.status(404).json({ success: false, message: 'JobIndex not found' });
-//     }
-
-//     await prisma.jobIndex.delete({ where: { id: jobIndexId } });
-
-//     res.status(200).json({ success: true, message: 'JobIndex deleted successfully' });
-//   } catch (error) {
-//     console.error('Error deleting jobIndex:', error);
-//     res.status(500).json({ success: false, message: 'Error deleting jobIndex' });
-//   }
-// };
+    res.status(200).json({ success: true, message: 'JobIndex deleted and logged successfully' });
+  } catch (error) {
+    console.error('Error deleting jobIndex:', error);
+    res.status(500).json({ success: false, message: 'Error deleting jobIndex' });
+  }
+};
