@@ -3,18 +3,11 @@ import prisma from '../DB/db.config.js';
 
 const authenticateUser = async (req, res, next) => {
   try {
-    // Try to get token from cookie first, then from Authorization header
     let token = req.cookies?.sva_auth;
 
-    // If no cookie token, check Authorization header
-    if (!token && req.headers.authorization) {
-      const authHeader = req.headers.authorization;
-      if (authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-      }
+    if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
     }
-
-    // console.log('Token found:', token ? 'Yes' : 'No');
 
     if (!token) {
       return res.status(401).json({
@@ -24,7 +17,6 @@ const authenticateUser = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded token:', decoded);
 
     if (!decoded?.id) {
       return res.status(401).json({
@@ -44,8 +36,10 @@ const authenticateUser = async (req, res, next) => {
       });
     }
 
-    // Attach user to request object
-    req.user = user;
+    // Omit the password field before attaching user
+    const { password, ...safeUser } = user;
+
+    req.user = safeUser;
     next();
   } catch (err) {
     console.error('Authentication error:', err);
