@@ -36,19 +36,6 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-// Add this before the authenticateUser middleware
-// app.use((req, res, next) => {
-//   console.log('Auth Debug:', {
-//     authHeader: req.headers.authorization,
-//     cookies: req.cookies,
-//     token: req.cookies.token || req.headers.authorization?.split(' ')[1] || 'No token found',
-//   });
-//   next();
-// });
-
-// authentication middleware
-// app.use(authenticateUser);
-
 import userRoute from "./src/routes/userRoutes.js";
 import jobRoute from "./src/routes/jobRoutes.js";
 import categoryRoute from "./src/routes/categoryRoutes.js";
