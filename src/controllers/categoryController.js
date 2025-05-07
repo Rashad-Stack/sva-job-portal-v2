@@ -62,36 +62,28 @@ export const createCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   const { id, name } = req.body;
 
+  if (!id) {
+    return res.status(400).json({ message: "ID is required" });
+  }
+
   try {
-    // Check if category exists
-    const existingCategory = await prisma.category.findUnique({
+    const category = await prisma.category.findUnique({
       where: { id },
     });
 
-    if (!existingCategory) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
     }
 
-    // Update the category
     const updatedCategory = await prisma.category.update({
       where: { id },
       data: { name },
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Category updated successfully",
-      data: updatedCategory,
-    });
+    res.json(updatedCategory);
   } catch (error) {
     console.error("Error updating category:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error updating category",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -100,7 +92,6 @@ export const deleteCategory = async (req, res) => {
   const { id } = req.body;
 
   try {
-    // Check if category exists
     const existingCategory = await prisma.category.findUnique({
       where: { id },
     });

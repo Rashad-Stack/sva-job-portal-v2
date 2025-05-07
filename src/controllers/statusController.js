@@ -59,14 +59,17 @@ export const createStatus = async (req, res) => {
 export const updateStatus = async (req, res) => {
   const { id, name } = req.body;
 
-  try {
-    const existingStatus = await prisma.status.findUnique({ where: { id } });
+  if (!id) {
+    return res.status(400).json({ message: "ID is required" });
+  }
 
-    if (!existingStatus) {
-      return res.status(404).json({
-        success: false,
-        message: "Status not found",
-      });
+  try {
+    const status = await prisma.status.findUnique({
+      where: { id },
+    });
+
+    if (!status) {
+      return res.status(404).json({ message: "status not found" });
     }
 
     const updatedStatus = await prisma.status.update({
@@ -74,20 +77,12 @@ export const updateStatus = async (req, res) => {
       data: { name },
     });
 
-    res.status(200).json({
-      success: true,
-      message: "Status updated successfully",
-      data: updatedStatus,
-    });
+    res.json(updatedStatus);
   } catch (error) {
     console.error("Error updating status:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error updating status",
-    });
+    res.status(500).json({ message: error.message });
   }
 };
-
 // Delete status
 export const deleteStatus = async (req, res) => {
   const { id } = req.body;
