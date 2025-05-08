@@ -41,6 +41,7 @@ import jobRoute from "./src/routes/jobRoutes.js";
 import categoryRoute from "./src/routes/categoryRoutes.js";
 import jobIndexRouter from "./src/routes/jobIndexRoutes.js";
 import statusRoutes from "./src/routes/statusRoutes.js";
+import changeLogRoute from "./src/routes/changeLogRoute.js";
 
 // Protected routes
 app.use("/api/v2/user", userRoute);
@@ -48,6 +49,7 @@ app.use("/api/v2/job", jobRoute);
 app.use("/api/v2/category", categoryRoute);
 app.use("/api/v2/status", authenticateUser, statusRoutes);
 app.use("/api/v2/job-index", authenticateUser, jobIndexRouter);
+app.use("/api/v2/job-index/changelog", authenticateUser, changeLogRoute);
 
 // Start server
 app.listen(port, () => {
