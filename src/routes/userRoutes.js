@@ -19,8 +19,8 @@ userRouter.post("/logout", logoutUser);
 // User management
 userRouter.get("/:id", showUser);
 userRouter.put("/update/:id", updateUser);
-userRouter.get("/all", verifyRole("ADMIN"), fetchUsers);
+userRouter.get("/", fetchUsers);
 userRouter.post("/create", createUser);
-userRouter.delete("/delete/:id", verifyRole("ADMIN"), deleteUser);
+userRouter.delete("/delete/:id", deleteUser);
 
 export default userRouter;
