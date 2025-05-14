@@ -3,6 +3,7 @@ import {
   createJob,
   deleteJob,
   fetchJobs,
+  getJobBySlug,
   showJob,
   updateJob,
 } from "../controllers/jobController.js";
@@ -11,6 +12,7 @@ import authenticateUser from "../middleware/auth.js";
 const jobRouter = express.Router();
 
 jobRouter.get("/all", fetchJobs);
+jobRouter.get("/slug/:slug", getJobBySlug);
 jobRouter.get("/:id", showJob);
 jobRouter.post("/create", authenticateUser, createJob);
 jobRouter.put("/update/:id", authenticateUser, updateJob);

@@ -46,7 +46,7 @@ model User {
   name              String
   email             String      @unique
   password          String
-  role              Role @default(MODERATOR)
+  role              Role        @default(MODERATOR)
   createdAt         DateTime    @default(now())
   jobs              Job[]       @relation("UserJobs")
   jobIndexesCreated JobIndex[]  @relation("JobIndexCreatedBy")
@@ -68,9 +68,10 @@ model Job {
   jobType        JobType
   jobLevel       JobLevel
   categoryId     String?
-  category       Category?  @relation(fields: [categoryId], references: [id])
+  category       Category? @relation(fields: [categoryId], references: [id])
   jobNature      JobNature
   shift          Shift
+  slug           String
   googleForm     String
   deadline       DateTime
 }
@@ -105,7 +106,7 @@ model JobIndex {
   updatedAt         DateTime @updatedAt
 
   status     Status      @relation(fields: [statusId], references: [id])
-  category   Category?    @relation(fields: [categoryId], references: [id])
+  category   Category?   @relation(fields: [categoryId], references: [id])
   creator    User?       @relation(fields: [createdBy], references: [id], name: "JobIndexCreatedBy")
   updater    User?       @relation(fields: [updatedBy], references: [id], name: "JobIndexUpdatedBy")
   changeLogs ChangeLog[]

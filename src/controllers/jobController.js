@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import prisma from "../DB/db.config.js";
 
 // Fetch all jobs
@@ -35,6 +36,17 @@ export const createJob = async (req, res) => {
   } = req.body;
 
   try {
+    let slug = slugify(title, { lower: true, strict: true });
+
+    const existingJob = await prisma.job.findFirst({
+      where: { slug },
+    });
+
+    if (existingJob) {
+      const uniqueSuffix = Date.now().toString(36);
+      slug = `${slug}-${uniqueSuffix}`;
+    }
+
     const newJob = await prisma.job.create({
       data: {
         userId,
@@ -49,6 +61,7 @@ export const createJob = async (req, res) => {
         categoryId,
         jobNature,
         shift,
+        slug,
         deadline: new Date(deadline),
       },
     });
@@ -111,7 +124,12 @@ export const updateJob = async (req, res) => {
   try {
     const existingJob = await prisma.job.findUnique({ where: { id: jobId } });
 
-    if (!existingJob) {
+    let slug = slugify(title, { lower: true, strict: true });
+
+    if (existingJob) {
+      const uniqueSuffix = Date.now().toString(36);
+      slug = `${slug}-${uniqueSuffix}`;
+    } else {
       return res.status(404).json({ success: false, message: "Job not found" });
     }
 
@@ -129,6 +147,7 @@ export const updateJob = async (req, res) => {
         categoryId,
         jobNature,
         shift,
+        slug,
         deadline: new Date(deadline),
       },
     });
@@ -163,5 +182,26 @@ export const deleteJob = async (req, res) => {
   } catch (error) {
     console.error("Error deleting job:", error);
     res.status(500).json({ success: false, message: "Error deleting job" });
+  }
+};
+
+export const getJobBySlug = async (req, res) => {
+  const slug = req.params.slug;
+
+  try {
+    const job = await prisma.job.findFirst({
+      where: { slug },
+    });
+
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Job fetched successfully", data: job });
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

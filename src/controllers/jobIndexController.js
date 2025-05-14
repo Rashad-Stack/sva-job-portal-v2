@@ -1,4 +1,4 @@
-import prisma from '../DB/db.config.js';
+import prisma from "../DB/db.config.js";
 
 // Fetch all JobIndexes
 export const fetchJobIndex = async (req, res) => {
@@ -14,12 +14,12 @@ export const fetchJobIndex = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'JobIndexes fetched successfully',
+      message: "JobIndexes fetched successfully",
       data: jobIndexes,
     });
   } catch (error) {
-    console.error('Error fetching job indexes:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching job indexes:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -39,25 +39,34 @@ export const showJobIndexById = async (req, res) => {
     });
 
     if (!jobIndex) {
-      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "JobIndex not found" });
     }
 
     res.status(200).json({
       success: true,
-      message: 'JobIndex fetched successfully',
+      message: "JobIndex fetched successfully",
       data: jobIndex,
     });
   } catch (error) {
-    console.error('Error fetching jobIndex:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error("Error fetching jobIndex:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 // Create JobIndex
 export const createJobIndex = async (req, res) => {
   const userId = req.user?.id;
-  const { title, jobPost, sheetLink, adminAccess, candidateFormLink, statusId, categoryId } =
-    req.body;
+  const {
+    title,
+    jobPost,
+    sheetLink,
+    adminAccess,
+    candidateFormLink,
+    statusId,
+    categoryId,
+  } = req.body;
 
   try {
     // Create the JobIndex
@@ -79,7 +88,7 @@ export const createJobIndex = async (req, res) => {
       data: {
         userId,
         jobIndexId: newJobIndex.id,
-        action: 'ADD',
+        action: "ADD",
         newValue: JSON.stringify({
           title,
           jobPost,
@@ -95,14 +104,14 @@ export const createJobIndex = async (req, res) => {
     // Respond
     res.status(201).json({
       success: true,
-      message: 'JobIndex created successfully',
+      message: "JobIndex created successfully",
       data: newJobIndex,
     });
   } catch (error) {
-    console.error('Error creating jobIndex:', error);
+    console.error("Error creating jobIndex:", error);
     res.status(500).json({
       success: false,
-      message: 'Error creating jobIndex',
+      message: "Error creating jobIndex",
     });
   }
 };
@@ -111,14 +120,25 @@ export const createJobIndex = async (req, res) => {
 export const updateJobIndex = async (req, res) => {
   const userId = req.user?.id;
   const jobIndexId = req.params.id;
-  const { title, jobPost, sheetLink, adminAccess, candidateFormLink, statusId, categoryId } =
-    req.body;
+  const {
+    title,
+    jobPost,
+    sheetLink,
+    adminAccess,
+    candidateFormLink,
+    statusId,
+    categoryId,
+  } = req.body;
 
   try {
-    const existingJobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
+    const existingJobIndex = await prisma.jobIndex.findUnique({
+      where: { id: jobIndexId },
+    });
 
     if (!existingJobIndex) {
-      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "JobIndex not found" });
     }
 
     // update the JobIndex
@@ -141,7 +161,7 @@ export const updateJobIndex = async (req, res) => {
       data: {
         userId,
         jobIndexId: jobIndexId,
-        action: 'EDIT',
+        action: "EDIT",
         oldValue: JSON.stringify(existingJobIndex),
         newValue: JSON.stringify({
           title,
@@ -157,12 +177,14 @@ export const updateJobIndex = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: 'JobIndex updated successfully',
+      message: "JobIndex updated successfully",
       data: updatedJobIndex,
     });
   } catch (error) {
-    console.error('Error updating jobIndex:', error);
-    res.status(500).json({ success: false, message: 'Error updating jobIndex' });
+    console.error("Error updating jobIndex:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error updating jobIndex" });
   }
 };
 
@@ -172,10 +194,14 @@ export const deleteJobIndex = async (req, res) => {
   const jobIndexId = req.params.id;
 
   try {
-    const jobIndex = await prisma.jobIndex.findUnique({ where: { id: jobIndexId } });
+    const jobIndex = await prisma.jobIndex.findUnique({
+      where: { id: jobIndexId },
+    });
 
     if (!jobIndex) {
-      return res.status(404).json({ success: false, message: 'JobIndex not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: "JobIndex not found" });
     }
 
     // Create a change log BEFORE deletion
@@ -183,7 +209,7 @@ export const deleteJobIndex = async (req, res) => {
       data: {
         userId,
         jobIndexId,
-        action: 'DELETE',
+        action: "DELETE",
         oldValue: JSON.stringify({
           title: jobIndex.title,
           jobPost: jobIndex.jobPost,
@@ -199,9 +225,16 @@ export const deleteJobIndex = async (req, res) => {
     // Delete the job index
     await prisma.jobIndex.delete({ where: { id: jobIndexId } });
 
-    res.status(200).json({ success: true, message: 'JobIndex deleted and logged successfully' });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "JobIndex deleted and logged successfully",
+      });
   } catch (error) {
-    console.error('Error deleting jobIndex:', error);
-    res.status(500).json({ success: false, message: 'Error deleting jobIndex' });
+    console.error("Error deleting jobIndex:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error deleting jobIndex" });
   }
 };
