@@ -38,9 +38,11 @@ model Job {
   googleForm     String
   deadline       DateTime
   slug           String
+  description    String    @default("")
+  minSalary      Int       @default(0)
+  maxSalary      Int       @default(0)
   category       Category? @relation(fields: [categoryId], references: [id])
   user           User      @relation("UserJobs", fields: [userId], references: [id])
-  description    String    @default("")
 }
 
 model Category {

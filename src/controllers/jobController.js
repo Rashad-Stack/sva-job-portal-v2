@@ -38,6 +38,8 @@ export const createJob = async (req, res) => {
     shift,
     deadline,
     description,
+    minSalary,
+    maxSalary,
   } = req.body;
 
   try {
@@ -69,6 +71,8 @@ export const createJob = async (req, res) => {
         slug,
         deadline: new Date(deadline),
         description,
+        minSalary,
+        maxSalary,
       },
     });
 
@@ -126,6 +130,8 @@ export const updateJob = async (req, res) => {
     shift,
     deadline,
     description,
+    minSalary,
+    maxSalary,
   } = req.body;
 
   try {
@@ -157,6 +163,8 @@ export const updateJob = async (req, res) => {
         slug,
         deadline: new Date(deadline),
         description,
+        minSalary,
+        maxSalary,
       },
     });
 
