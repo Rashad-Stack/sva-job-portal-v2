@@ -4,7 +4,11 @@ import prisma from "../DB/db.config.js";
 // Fetch all jobs
 export const fetchJobs = async (req, res) => {
   try {
-    const jobs = await prisma.job.findMany();
+    const jobs = await prisma.job.findMany({
+      include: {
+        category: true,
+      },
+    });
 
     res.status(200).json({
       success: true,
