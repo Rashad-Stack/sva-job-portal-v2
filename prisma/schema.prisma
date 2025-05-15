@@ -21,12 +21,12 @@ model User {
 }
 
 model Job {
-  id             String    @id @default(uuid())
+  id             String        @id @default(uuid())
   title          String
   companyName    String
   numberOfHiring Int
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   userId         String
   appliedBy      Boolean
   location       String
@@ -38,11 +38,12 @@ model Job {
   googleForm     String
   deadline       DateTime
   slug           String
-  description    String    @default("")
-  minSalary      Int       @default(0)
-  maxSalary      Int       @default(0)
-  category       Category? @relation(fields: [categoryId], references: [id])
-  user           User      @relation("UserJobs", fields: [userId], references: [id])
+  description    String        @default("")
+  minSalary      Int           @default(0)
+  maxSalary      Int           @default(0)
+  category       Category?     @relation(fields: [categoryId], references: [id])
+  user           User          @relation("UserJobs", fields: [userId], references: [id])
+  applications   Application[]
 }
 
 model Category {
@@ -90,6 +91,20 @@ model ChangeLog {
   timestamp  DateTime   @default(now())
   jobIndex   JobIndex?  @relation(fields: [jobIndexId], references: [id])
   user       User       @relation(fields: [userId], references: [id])
+}
+
+model Application {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  fullName     String
+  email        String
+  phoneNumber  String
+  ExpectSalary Int
+  cv           String
+  githubUrl    String
+  cpProfile    String?
+  jobId        String
+  job          Job      @relation(fields: [jobId], references: [id])
 }
 
 enum Role {

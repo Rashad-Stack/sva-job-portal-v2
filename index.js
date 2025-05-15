@@ -1,7 +1,7 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
 import authenticateUser from "./src/middleware/auth.js";
 
 // Load environment variables
@@ -36,12 +36,13 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-import userRoute from "./src/routes/userRoutes.js";
-import jobRoute from "./src/routes/jobRoutes.js";
+import applicationRouter from "./src/routes/applicationRoutes.js";
 import categoryRoute from "./src/routes/categoryRoutes.js";
-import jobIndexRouter from "./src/routes/jobIndexRoutes.js";
-import statusRoutes from "./src/routes/statusRoutes.js";
 import changeLogRoute from "./src/routes/changeLogRoute.js";
+import jobIndexRouter from "./src/routes/jobIndexRoutes.js";
+import jobRoute from "./src/routes/jobRoutes.js";
+import statusRoutes from "./src/routes/statusRoutes.js";
+import userRoute from "./src/routes/userRoutes.js";
 
 // Protected routes
 app.use("/api/v2/user", userRoute);
@@ -50,6 +51,7 @@ app.use("/api/v2/category", categoryRoute);
 app.use("/api/v2/status", authenticateUser, statusRoutes);
 app.use("/api/v2/job-index", authenticateUser, jobIndexRouter);
 app.use("/api/v2/job-index/changelog", authenticateUser, changeLogRoute);
+app.use("/api/v2/job/application", applicationRouter);
 
 // Start server
 app.listen(port, () => {
