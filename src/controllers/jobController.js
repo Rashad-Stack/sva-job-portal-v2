@@ -191,6 +191,9 @@ export const getJobBySlug = async (req, res) => {
   try {
     const job = await prisma.job.findFirst({
       where: { slug },
+      include: {
+        category: true,
+      },
     });
 
     if (!job) {
