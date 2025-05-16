@@ -33,5 +33,5 @@ create application = http://localhost:3000/api/v2/job/application/create
 method = post
 get all jobs = http://localhost:3000/api/v2/job/application/all
 method = get
-get single jon = http://localhost:3000/api/v2/job/application/:job
+get single jon = http://localhost:3000/api/v2/job/application/:applicaiton
 method =  get
