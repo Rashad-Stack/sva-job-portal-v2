@@ -35,3 +35,11 @@ get all jobs = http://localhost:3000/api/v2/job/application/all
 method = get
 get single jon = http://localhost:3000/api/v2/job/application/:applicaiton
 method =  get
+
+form
+create form = http://localhost:3000/api/v2/job/form/create
+method = post
+get all jobs = http://localhost:3000/api/v2/job/form/all
+method = get
+get single jon = http://localhost:3000/api/v2/job/form/:id
+method =  get

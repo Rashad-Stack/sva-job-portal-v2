@@ -108,20 +108,37 @@ model Application {
 }
 
 model Form {
-  id        String   @id @default(ulid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   formTitle String
-  field     Field[]
+  fields    Field[]  @relation("FormFields")
 }
 
 model Field {
-  id       String  @id @default(ulid())
-  type     String
+  id       String    @id @default(uuid())
+  type     FieldType
   title    String
   required Boolean
   column   Int
-  Form     Form?   @relation(fields: [formId], references: [id], onDelete: Cascade)
-  formId   String? @map("form_id")
+  formId   String?   @map("form_id")
+  Form     Form?     @relation("FormFields", fields: [formId], references: [id], onDelete: Cascade)
+  options  Option[]  @relation("FieldOptions")
+}
+
+model Option {
+  id      String  @id @default(uuid())
+  label   String
+  value   String
+  fieldId String? @map("field_id")
+  Field   Field?  @relation("FieldOptions", fields: [fieldId], references: [id], onDelete: Cascade)
+}
+
+enum FieldType {
+  text
+  radio
+  checkbox
+  select
+  number
 }
 
 enum Role {
