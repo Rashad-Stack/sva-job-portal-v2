@@ -107,6 +107,22 @@ model Application {
   job          Job      @relation(fields: [jobId], references: [id])
 }
 
+model Form {
+  id        String   @id @default(ulid())
+  createdAt DateTime @default(now())
+  formTitle String
+  field     Field[]
+}
+
+model Field {
+  type     String
+  title    String
+  required Boolean
+  column   Int
+  Form     Form?   @relation(fields: [formId], references: [id])
+  formId   String?
+}
+
 enum Role {
   ADMIN
   MODERATOR
