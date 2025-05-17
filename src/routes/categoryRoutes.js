@@ -8,9 +8,9 @@ import {
 } from "../controllers/categoryController.js";
 const categoryRouter = express.Router();
 
+categoryRouter.post("/create", createCategory);
 categoryRouter.get("/all", fetchCategories);
 categoryRouter.get("/:id", fetchSingleCategory);
-categoryRouter.post("/create", createCategory);
 categoryRouter.put("/update", updateCategory);
 categoryRouter.delete("/delete", deleteCategory);
 
