@@ -47,7 +47,7 @@ export const createApplication = async (req, res) => {
         fullName,
         email,
         phoneNumber,
-        ExpectSalary,
+        ExpectSalary: Number(ExpectSalary),
         cv,
         githubUrl,
         cpProfile,

@@ -115,12 +115,13 @@ model Form {
 }
 
 model Field {
+  id       String  @id @default(ulid())
   type     String
   title    String
   required Boolean
   column   Int
-  Form     Form?   @relation(fields: [formId], references: [id])
-  formId   String?
+  Form     Form?   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  formId   String? @map("form_id")
 }
 
 enum Role {
