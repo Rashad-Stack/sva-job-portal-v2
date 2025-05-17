@@ -4,9 +4,8 @@ export const fetchForms = async (req, res) => {
   try {
     const forms = await prisma.form.findMany({
       include: {
-        fields: true,
-        include: {
-          options: true,
+        fields: {
+          include: { options: true },
         },
       },
     });
