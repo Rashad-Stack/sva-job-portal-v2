@@ -22,6 +22,11 @@ export const showForm = async (req, res) => {
   try {
     const form = await prisma.form.findUnique({
       where: { id: formId },
+      include: {
+        fields: {
+          include: { options: true },
+        },
+      },
     });
 
     if (!form) {

@@ -1,6 +1,6 @@
-import prisma from "../DB/db.config.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import prisma from "../DB/db.config.js";
 
 // Get all users
 export const fetchUsers = async (req, res) => {
@@ -115,6 +115,7 @@ export const deleteUser = async (req, res) => {
 // Login
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  console.log({ email, password });
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
