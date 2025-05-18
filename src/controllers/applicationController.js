@@ -2,7 +2,15 @@ import prisma from "../DB/db.config.js";
 
 export const fetchApplications = async (req, res) => {
   try {
-    const applications = await prisma.application.findMany();
+    const applications = await prisma.application.findMany({
+      include: {
+        job: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
     res.status(200).json({ success: true, data: applications });
   } catch (error) {
     console.error("Error fetching applications:", error);
@@ -16,6 +24,13 @@ export const showApplication = async (req, res) => {
   try {
     const application = await prisma.application.findUnique({
       where: { id: applicationId },
+      include: {
+        job: {
+          include: {
+            category: true,
+          },
+        },
+      },
     });
 
     if (!application) {

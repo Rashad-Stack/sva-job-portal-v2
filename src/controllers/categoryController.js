@@ -41,6 +41,7 @@ export const fetchSingleCategory = async (req, res) => {
 // Create a category
 export const createCategory = async (req, res) => {
   const { name } = req.body;
+  console.log(req.body);
   try {
     const newCategory = await prisma.category.create({
       data: {
@@ -60,7 +61,8 @@ export const createCategory = async (req, res) => {
 
 // Update category
 export const updateCategory = async (req, res) => {
-  const { id, name } = req.body;
+  const { name } = req.body;
+  const id = req?.params?.id;
 
   if (!id) {
     return res.status(400).json({ message: "ID is required" });
@@ -80,7 +82,7 @@ export const updateCategory = async (req, res) => {
       data: { name },
     });
 
-    res.json(updatedCategory);
+    res.status(200).json(updatedCategory);
   } catch (error) {
     console.error("Error updating category:", error);
     res.status(500).json({ message: error.message });
@@ -89,7 +91,7 @@ export const updateCategory = async (req, res) => {
 
 // Delete category
 export const deleteCategory = async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
   try {
     const existingCategory = await prisma.category.findUnique({
