@@ -109,36 +109,24 @@ model Application {
 
 model Form {
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
   formTitle String
-  fields    Field[]  @relation("FormFields")
+  fields    Field[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Field {
-  id       String    @id @default(uuid())
-  type     FieldType
-  title    String
-  required Boolean
-  column   Int
-  formId   String?   @map("form_id")
-  Form     Form?     @relation("FormFields", fields: [formId], references: [id], onDelete: Cascade)
-  options  Option[]  @relation("FieldOptions")
-}
-
-model Option {
-  id      String  @id @default(uuid())
-  label   String
-  value   String
-  fieldId String? @map("field_id")
-  Field   Field?  @relation("FieldOptions", fields: [fieldId], references: [id], onDelete: Cascade)
-}
-
-enum FieldType {
-  text
-  radio
-  checkbox
-  select
-  number
+  id        String   @id @default(uuid())
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  title     String
+  type      String
+  required  Boolean  @default(false)
+  column    Int      @default(12)
+  options   Json // Store options as JSON, or use a separate Option model
+  value     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

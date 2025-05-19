@@ -5,7 +5,7 @@ export const fetchForms = async (req, res) => {
     const forms = await prisma.form.findMany({
       include: {
         fields: {
-          include: { options: true },
+          include: true,
         },
       },
     });
@@ -24,7 +24,7 @@ export const showForm = async (req, res) => {
       where: { id: formId },
       include: {
         fields: {
-          include: { options: true },
+          include: true,
         },
       },
     });
@@ -43,77 +43,84 @@ export const showForm = async (req, res) => {
 export const createForm = async (req, res) => {
   console.log("client:", req.body);
   try {
-    const { formTitle, fields } = req.body;
+    const { formTitle, fields, newField } = req.body;
 
-    // Validate input
-    if (!formTitle || !Array.isArray(fields) || fields.length === 0) {
+    if (!formTitle || !fields || !Array.isArray(fields)) {
       return res.status(400).json({
-        message: "formTitle and a non-empty fields array are required",
+        error: "formTitle and fields are required, and fields must be an array",
       });
     }
 
-    const newForm = await prisma.form.create({
-      data: {
-        formTitle,
-        fields: {
-          create: fields.map((field) => {
-            // Normalize type to match FieldType enum
-            const typeMap = {
-              text: "text",
-              number: "number",
-              select: "select",
-              radio: "radio",
-              checkbox: "checkbox",
-            };
-            const fieldType = typeMap[field.type.toLowerCase()] || "text"; // Fallback to text
+    // Clean and validate fields
+    const cleanedFields = fields.map((field) => ({
+      title: field.title || "",
+      type: field.type || "text",
+      required: field.required || false,
+      column: field.column || 12,
+      options: Array.isArray(field.options) ? field.options : [],
+      value: field.value || null,
+    }));
 
-            return {
-              title: field.title,
-              required: field.required,
-              column: field.column,
-              type: fieldType,
-              options: {
-                create: field.options
-                  ? field.options
-                      .filter((opt) => {
-                        // Check for either radio or select key, and ensure label or value exists
-                        const optionData = opt.radio || opt.select;
-                        return (
-                          optionData && (optionData.label || optionData.value)
-                        );
-                      })
-                      .map((opt) => {
-                        const optionData = opt.radio || opt.select;
-                        return {
-                          label: optionData.label,
-                          value: optionData.value,
-                        };
-                      })
-                  : [],
-              },
-            };
-          }),
+    let finalFields = cleanedFields;
+    if (newField && newField.title && newField.type) {
+      finalFields = [
+        ...cleanedFields,
+        {
+          title: newField.title,
+          type: newField.type,
+          required: newField.required || false,
+          column: newField.column || 12,
+          options: Array.isArray(newField.options) ? newField.options : [],
+          value: null,
         },
-      },
-      include: {
-        fields: {
-          include: { options: true },
+      ];
+    }
+
+    // Create form and fields in a transaction
+    const newForm = await prisma.$transaction(async (tx) => {
+      // Create the form
+      const form = await tx.form.create({
+        data: {
+          formTitle,
         },
-      }, // Include fields and options in response
+      });
+
+      // Create fields
+      await tx.field.createMany({
+        data: finalFields.map((field) => ({
+          formId: form.id,
+          title: field.title,
+          type: field.type,
+          required: field.required,
+          column: field.column,
+          options: field.options,
+          value: field.value,
+        })),
+      });
+
+      return form;
     });
 
-    res.status(201).json({ success: true, data: newForm });
+    return res.status(201).json({
+      message: "Form created successfully",
+      data: newForm,
+    });
   } catch (error) {
     console.error("Error creating form:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 export const deleteForm = async (req, res) => {
   const formId = req.params.id;
 
+  console.log(formId);
+
   try {
-    await prisma.form.delete({ where: { id: formId } });
+    await prisma.form.deleteMany({
+      where: { id: formId },
+      include: { fields: true },
+    });
 
     res.status(200).json({ message: "Form deleted successfully" });
   } catch (error) {
@@ -180,9 +187,7 @@ export const updateForm = async (req, res) => {
           },
         },
         include: {
-          fields: {
-            include: { options: true },
-          },
+          fields: true,
         }, // Include fields and options in response
       });
 

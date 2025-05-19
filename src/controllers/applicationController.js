@@ -23,7 +23,7 @@ export const showApplication = async (req, res) => {
 
   try {
     const application = await prisma.application.findUnique({
-      where: { id: applicationId },
+      where: { id: parseInt(applicationId) },
       include: {
         job: {
           include: {
