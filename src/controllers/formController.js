@@ -119,7 +119,6 @@ export const deleteForm = async (req, res) => {
   try {
     await prisma.form.deleteMany({
       where: { id: formId },
-      include: { fields: true },
     });
 
     res.status(200).json({ message: "Form deleted successfully" });
@@ -141,50 +140,42 @@ export const updateForm = async (req, res) => {
     if (!existingForm) {
       return res.status(404).json({ message: "Form not found" });
     } else {
+      // Delete existing fields
+      await prisma.field.deleteMany({
+        where: { formId: formId },
+      });
+
+      // Create new fields
+      const newFields = await Promise.all(
+        fields.map((field) => {
+          // Normalize type to match FieldType enum
+          const typeMap = {
+            text: "text",
+            number: "number",
+            select: "select",
+            radio: "radio",
+            checkbox: "checkbox",
+          };
+          const fieldType = typeMap[field.type.toLowerCase()] || "text"; // Fallback to text
+
+          return prisma.field.create({
+            data: {
+              title: field.title,
+              required: field.required,
+              column: field.column,
+              type: fieldType,
+              formId: formId,
+              options: field.options,
+            },
+          });
+        })
+      );
+
+      // Update form title
       const updatedForm = await prisma.form.update({
         where: { id: formId },
         data: {
           formTitle,
-          fields: {
-            deleteMany: {},
-            create: fields.map((field) => {
-              // Normalize type to match FieldType enum
-              const typeMap = {
-                text: "text",
-                number: "number",
-                select: "select",
-                radio: "radio",
-                checkbox: "checkbox",
-              };
-              const fieldType = typeMap[field.type.toLowerCase()] || "text"; // Fallback to text
-
-              return {
-                title: field.title,
-                required: field.required,
-                column: field.column,
-                type: fieldType,
-                options: {
-                  create: field.options
-                    ? field.options
-                        .filter((opt) => {
-                          // Check for either radio or select key, and ensure label or value exists
-                          const optionData = opt.radio || opt.select;
-                          return (
-                            optionData && (optionData.label || optionData.value)
-                          );
-                        })
-                        .map((opt) => {
-                          const optionData = opt.radio || opt.select;
-                          return {
-                            label: optionData.label,
-                            value: optionData.value,
-                          };
-                        })
-                    : [],
-                },
-              };
-            }),
-          },
         },
         include: {
           fields: true,
