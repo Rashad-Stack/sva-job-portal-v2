@@ -58,7 +58,7 @@ app.use("/api/v2/status", authenticateUser, statusRoutes);
 app.use("/api/v2/job-index", authenticateUser, jobIndexRouter);
 app.use("/api/v2/job-index/changelog", authenticateUser, changeLogRoute);
 app.use("/api/v2/job/application", applicationRouter);
-app.use("/api/v2/job/forms", formRouter);
+app.use("/api/v2/job/forms", authenticateUser, formRouter);
 
 // Start server
 app.listen(port, () => {

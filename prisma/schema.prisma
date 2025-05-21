@@ -21,29 +21,30 @@ model User {
 }
 
 model Job {
-  id             String        @id @default(uuid())
-  title          String
-  companyName    String
-  numberOfHiring Int
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  userId         String
-  appliedBy      Boolean
-  location       String
-  jobType        JobType
-  jobLevel       JobLevel
-  categoryId     String?
-  jobNature      JobNature
-  shift          Shift
-  googleForm     String
-  deadline       DateTime
-  slug           String
-  description    String        @default("")
-  minSalary      Int           @default(0)
-  maxSalary      Int           @default(0)
-  category       Category?     @relation(fields: [categoryId], references: [id])
-  user           User          @relation("UserJobs", fields: [userId], references: [id])
-  applications   Application[]
+  id                String        @id @default(uuid())
+  title             String
+  companyName       String
+  numberOfHiring    Int
+  appliedByInternal Boolean
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  userId            String
+  location          String
+  jobType           JobType
+  jobLevel          JobLevel
+  categoryId        String?
+  jobNature         JobNature
+  shift             Shift
+  googleForm        String
+  deadline          DateTime
+  slug              String
+  description       String        @default("")
+  minSalary         Int           @default(0)
+  maxSalary         Int           @default(0)
+  fields            Json?
+  category          Category?     @relation(fields: [categoryId], references: [id])
+  user              User          @relation("UserJobs", fields: [userId], references: [id])
+  applications      Application[]
 }
 
 model Category {

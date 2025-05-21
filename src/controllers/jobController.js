@@ -28,7 +28,7 @@ export const createJob = async (req, res) => {
     title,
     companyName,
     numberOfHiring,
-    appliedBy,
+    appliedByInternal,
     location,
     jobType,
     jobLevel,
@@ -40,6 +40,7 @@ export const createJob = async (req, res) => {
     description,
     minSalary,
     maxSalary,
+    fields,
   } = req.body;
 
   try {
@@ -60,7 +61,7 @@ export const createJob = async (req, res) => {
         title,
         companyName,
         numberOfHiring,
-        appliedBy,
+        appliedByInternal: Boolean(appliedByInternal),
         location,
         googleForm,
         jobType,
@@ -73,6 +74,7 @@ export const createJob = async (req, res) => {
         description,
         minSalary,
         maxSalary,
+        fields,
       },
     });
 
@@ -120,7 +122,7 @@ export const updateJob = async (req, res) => {
     title,
     companyName,
     numberOfHiring,
-    appliedBy,
+    appliedByInternal,
     location,
     jobType,
     jobLevel,
@@ -132,6 +134,7 @@ export const updateJob = async (req, res) => {
     description,
     minSalary,
     maxSalary,
+    fields,
   } = req.body;
 
   try {
@@ -152,7 +155,7 @@ export const updateJob = async (req, res) => {
         title,
         companyName,
         numberOfHiring,
-        appliedBy,
+        appliedByInternal: Boolean(appliedByInternal),
         location,
         jobType,
         jobLevel,
@@ -165,6 +168,7 @@ export const updateJob = async (req, res) => {
         description,
         minSalary,
         maxSalary,
+        fields,
       },
     });
 
@@ -211,10 +215,6 @@ export const getJobBySlug = async (req, res) => {
         category: true,
       },
     });
-
-    if (!job) {
-      return res.status(404).json({ success: false, message: "Job not found" });
-    }
 
     res
       .status(200)
