@@ -16,6 +16,7 @@ model User {
   createdAt         DateTime    @default(now())
   changeLogs        ChangeLog[]
   jobs              Job[]       @relation("UserJobs")
+  comment           Comment[]
   jobIndexesCreated JobIndex[]  @relation("JobIndexCreatedBy")
   jobIndexesUpdated JobIndex[]  @relation("JobIndexUpdatedBy")
 }
@@ -45,6 +46,8 @@ model Job {
   category          Category?     @relation(fields: [categoryId], references: [id])
   user              User          @relation("UserJobs", fields: [userId], references: [id])
   applications      Application[]
+  templateId        String?
+  template          Form?         @relation(fields: [templateId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -95,17 +98,34 @@ model ChangeLog {
 }
 
 model Application {
-  id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  fullName     String
-  email        String
-  phoneNumber  String
-  ExpectSalary Int
-  cv           String
-  githubUrl    String
-  cpProfile    String?
-  jobId        String
-  job          Job      @relation(fields: [jobId], references: [id])
+  id                        String      @id @default(uuid())
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime?
+  fullName                  String
+  email                     String
+  phoneNumber               String
+  expectSalary              Int
+  cv                        String
+  githubUrl                 String
+  cpProfile                 String?
+  shortListStatus           ShortStat   @default(NONE)
+  calStatus                 CallStat    @default(NONE)
+  mailed                    MailedState @default(NOT_YET)
+  designation               String?
+  testResult                Int?
+  level                     Level       @default(NONE)
+  profile                   ProfileStat @default(NONE)
+  hiringType                HiringType  @default(NONE)
+  internShipProbationSalary Int?
+  finalSalary               Int?
+  hiringStatus              HiringStat  @default(NONE)
+  profileOn                 String?
+  joining                   DateTime?
+  commentId                 String?
+  comments                  Comment?    @relation(fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  jobId                     String
+  job                       Job         @relation(fields: [jobId], references: [id])
+  othersFields              Json?
 }
 
 model Form {
@@ -114,6 +134,7 @@ model Form {
   fields    Field[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Job       Job[]
 }
 
 model Field {
@@ -128,6 +149,15 @@ model Field {
   value     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id            String        @id @default(uuid())
+  comment       String
+  userId        String
+  applications  Application[]
+  user          User          @relation(fields: userId, references: id)
+  applicationId String
 }
 
 enum Role {
@@ -162,4 +192,58 @@ enum ActionType {
   ADD
   EDIT
   DELETE
+}
+
+enum ShortStat {
+  SHORTLIST
+  REJECTED
+  NONE
+}
+
+enum CallStat {
+  YES
+  NOT_INTERESTED
+  NO_RESPONSE
+  OUT_OF_DHAKA
+  NEED_OTHERS_DATE
+  PHONE_OFF
+  JOINED_SVA_PYTHON
+  JOINED_IN_OTHERS_CONCERN
+  NOT_SURE
+  BUSY
+  NONE
+}
+
+enum MailedState {
+  SENT
+  NOT_YET
+}
+
+enum Level {
+  NONE
+  LEVEL_A
+  LEVEL_B
+  LEVEL_C
+  LEVEL_D
+}
+
+enum ProfileStat {
+  NONE
+  YES
+  NO
+}
+
+enum HiringType {
+  NONE
+  INTERN
+  PROBATION
+}
+
+enum HiringStat {
+  NONE
+  CONFIRMED_NEED_TO_FINAL_CALL
+  PENDING_NEED_TO_DISCUSS
+  WAITING_FOR_CANDIDATE_CONFIRMATION
+  HIRED
+  REJECTED
 }

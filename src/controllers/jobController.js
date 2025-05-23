@@ -41,6 +41,7 @@ export const createJob = async (req, res) => {
     minSalary,
     maxSalary,
     fields,
+    templateId,
   } = req.body;
 
   try {
@@ -75,6 +76,7 @@ export const createJob = async (req, res) => {
         minSalary,
         maxSalary,
         fields,
+        templateId,
       },
     });
 
@@ -135,6 +137,7 @@ export const updateJob = async (req, res) => {
     minSalary,
     maxSalary,
     fields,
+    templateId,
   } = req.body;
 
   try {
@@ -169,6 +172,7 @@ export const updateJob = async (req, res) => {
         minSalary,
         maxSalary,
         fields,
+        templateId,
       },
     });
 

@@ -2,6 +2,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import hpp from "hpp";
+import morgan from "morgan";
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +20,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://softvence-skill-job.vercel.app",
 ];
 const corsOptions = {
   origin: (origin, callback) => {
@@ -26,9 +31,40 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
+
+// Set secure HTTP headers
+app.use(helmet());
+app.use(morgan("dev"));
+
+// Limit request from same api
+const limit = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many request from this IP. please try again in an hour!",
+});
+
+//  Body parser, reading data from body into req.body
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Prevent parameter Pollution/duplication
+app.use(
+  hpp({
+    whitelist: [
+      "duration",
+      "maxGroupSize",
+      "ratingsAverage",
+      "ratingQuantity",
+      "price",
+      "startDates",
+      "durationWeeks",
+      "difficulty",
+    ],
+  })
+);
 
 // Middleware
 app.use(cors(corsOptions));
@@ -63,4 +99,15 @@ app.use("/api/v2/job/forms", authenticateUser, formRouter);
 // Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+});
+
+// Error handling
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION 🎆 Shutting down...", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED REJECTION 🎆 Shutting down...", err);
+  server.close(() => process.exit(1));
 });
