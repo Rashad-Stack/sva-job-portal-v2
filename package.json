@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "setup": "npm install  && npx prisma migrate dev --name init && npx prisma db push"
+    "setup": "npm install  && npx prisma generate && npx prisma migrate dev --name init && npx prisma db push",
+    "build": "npx prisma generate"
   },
   "author": "",
   "license": "ISC",
