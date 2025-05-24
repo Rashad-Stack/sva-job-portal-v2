@@ -4,10 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "postinstall": "prisma generate",
+    "postinstall": "npm install  && npx prisma generate && npx prisma migrate dev --name init && npx prisma db push",
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "setup": "npm install  && npx prisma generate && npx prisma migrate dev --name init && npx prisma db push"
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
