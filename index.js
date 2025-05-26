@@ -58,6 +58,7 @@ const corsOptions = {
     "http://localhost:3000",
     "http://localhost:3001",
     "https://softvence-skill-job.vercel.app",
+    "https://job-portal-dashboard-v2.netlify.app",
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
