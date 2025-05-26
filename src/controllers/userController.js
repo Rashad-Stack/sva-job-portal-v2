@@ -5,7 +5,10 @@ import prisma from "../DB/db.config.js";
 // Get all users
 export const fetchUsers = async (req, res) => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      where: { terminate: false },
+      include: { terminate: false },
+    });
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -101,7 +104,12 @@ export const deleteUser = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    await prisma.user.delete({ where: { id: userId } });
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        terminate: true,
+      },
+    });
 
     res
       .status(200)

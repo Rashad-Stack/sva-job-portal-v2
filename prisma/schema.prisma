@@ -16,6 +16,7 @@ model User {
   createdAt         DateTime    @default(now())
   changeLogs        ChangeLog[]
   jobs              Job[]       @relation("UserJobs")
+  terminate         Boolean     @default(false)
   comment           Comment[]
   jobIndexesCreated JobIndex[]  @relation("JobIndexCreatedBy")
   jobIndexesUpdated JobIndex[]  @relation("JobIndexUpdatedBy")
@@ -44,7 +45,7 @@ model Job {
   maxSalary         Int           @default(0)
   fields            Json?
   category          Category?     @relation(fields: [categoryId], references: [id])
-  user              User          @relation("UserJobs", fields: [userId], references: [id])
+  user              User          @relation("UserJobs", fields: [userId], references: [id], onDelete: Cascade)
   applications      Application[]
   templateId        String?
   template          Form?         @relation(fields: [templateId], references: [id], onDelete: Cascade)
@@ -163,6 +164,8 @@ model Comment {
 enum Role {
   ADMIN
   MODERATOR
+  HR
+  SOCIAL_MEDIA_MANAGER
 }
 
 enum JobType {
